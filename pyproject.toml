@@ -1,0 +1,83 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fora"
+version = "0.1.0"
+description = "Fora — AI systems and growth studio platform."
+requires-python = ">=3.14,<3.15"
+dependencies = [
+    "Django>=5.2.12,<5.3",
+    "psycopg[binary]>=3.3,<4",
+    "dj-database-url>=3,<4",
+    "python-dotenv>=1.1,<2",
+    "gunicorn>=23,<24",
+    "uvicorn>=0.35,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+    "pytest-django>=4,<5",
+    "coverage>=7,<8",
+    "ruff>=0.12,<1",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.development"
+python_files = [
+    "test_*.py",
+    "*_test.py",
+]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["apps", "config"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+exclude = [
+    ".git",
+    ".venv",
+    "staticfiles",
+    "media",
+    "migrations",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+    "B",
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = [
+    "apps*",
+    "config*",
+    "content*",
+]
+exclude = [
+    "tests*",
+    "templates*",
+    "static*",
+    "design*",
+    "scripts*",
+    "docs*",
+]
+namespaces = false
