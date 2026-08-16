@@ -24,6 +24,7 @@ RUN python -m pip install --upgrade pip \
 COPY templates ./templates
 COPY static ./static
 COPY design ./design
+COPY scripts ./scripts
 
 RUN SECRET_KEY=build-only-secret \
     ALLOWED_HOSTS=localhost \
@@ -34,4 +35,4 @@ RUN SECRET_KEY=build-only-secret \
 
 EXPOSE 8000
 
-CMD ["gunicorn", "config.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--workers", "2", "--access-logfile", "-"]
+CMD ["./scripts/deployment/start.sh"]
