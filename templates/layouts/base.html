@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>
+    {% block title %}
+      {{ fora.seo.default_title }}
+    {% endblock %}
+  </title>
+
+  <meta
+    name="description"
+    content="{% block meta_description %}{{ fora.seo.default_description }}{% endblock %}"
+  >
+</head>
+
+<body>
+  <header>
+    <nav aria-label="Primary navigation">
+      <a href="/">
+        {{ fora.brand.name }}
+      </a>
+
+      <ul>
+        {% for item in fora.navigation %}
+          <li>
+            <a href="{{ item.href }}">
+              {{ item.label }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <a href="{{ fora.primary_cta.href }}">
+        {{ fora.primary_cta.label }}
+      </a>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>
+      {{ fora.brand.name }} — {{ fora.business.category }}
+    </p>
+  </footer>
+</body>
+</html>

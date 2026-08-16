@@ -1,0 +1,108 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+  {{ fora.brand.name }} — {{ fora.brand.tagline }}
+{% endblock %}
+
+{% block content %}
+
+<section>
+  <p>{{ home.hero.eyebrow }}</p>
+
+  <h1>
+    {{ home.hero.headline }}
+  </h1>
+
+  <p>
+    {{ home.hero.description }}
+  </p>
+
+  <p>
+    <a href="{{ fora.primary_cta.href }}">
+      {{ home.hero.primary_cta }}
+    </a>
+
+    <a href="/work/">
+      {{ home.hero.secondary_cta }}
+    </a>
+  </p>
+</section>
+
+<section>
+  <h2>What Fora helps with</h2>
+
+  {% for service in services %}
+    <article>
+      <h3>{{ service.name }}</h3>
+      <p>{{ service.short_description }}</p>
+    </article>
+  {% endfor %}
+</section>
+
+<section>
+  <h2>Why Fora</h2>
+
+  {% for benefit in home.benefits %}
+    <article>
+      <h3>{{ benefit.title }}</h3>
+      <p>{{ benefit.description }}</p>
+    </article>
+  {% endfor %}
+</section>
+
+<section>
+  <h2>How we work</h2>
+
+  {% for step in home.process_steps %}
+    <article>
+      <p>{{ step.number }}</p>
+      <h3>{{ step.title }}</h3>
+      <p>{{ step.description }}</p>
+    </article>
+  {% endfor %}
+</section>
+
+<section>
+  <h2>Plans</h2>
+
+  {% for plan in plans %}
+    <article>
+      <h3>{{ plan.name }}</h3>
+
+      <p>
+        {{ plan.currency }} {{ plan.price }}
+      </p>
+
+      <p>
+        {{ plan.cta_label }}
+      </p>
+    </article>
+  {% endfor %}
+</section>
+
+<section>
+  <h2>Frequently asked questions</h2>
+
+  {% for item in faqs %}
+    <article>
+      <h3>{{ item.question }}</h3>
+      <p>{{ item.answer }}</p>
+    </article>
+  {% endfor %}
+</section>
+
+<section>
+  <h2>
+    {{ home.final_cta_headline }}
+  </h2>
+
+  <p>
+    {{ home.final_cta_description }}
+  </p>
+
+  <a href="{{ fora.primary_cta.href }}">
+    {{ home.final_cta_label }}
+  </a>
+</section>
+
+{% endblock %}
