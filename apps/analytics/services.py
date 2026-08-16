@@ -32,3 +32,24 @@ def record_event(
         utm_campaign=utm_campaign,
         metadata=metadata or {},
     )
+
+
+def record_request_event(
+    *,
+    request,
+    event: str,
+    lead_id: int | None = None,
+    project_id: int | None = None,
+    metadata: dict[str, Any] | None = None,
+) -> AnalyticsEvent | None:
+    return record_event(
+        event=event,
+        path=request.path[:500],
+        referrer=request.headers.get("Referer", "")[:500],
+        lead_id=lead_id,
+        project_id=project_id,
+        utm_source=request.GET.get("utm_source", "")[:120],
+        utm_medium=request.GET.get("utm_medium", "")[:120],
+        utm_campaign=request.GET.get("utm_campaign", "")[:120],
+        metadata=metadata,
+    )

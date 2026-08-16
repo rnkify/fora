@@ -1,5 +1,6 @@
 from apps.marketing.crm import convert_project_inquiry_to_lead
 from apps.marketing.models import Inquiry
+from apps.marketing.notifications import notify_new_inquiry
 
 
 def _request_metadata(request):
@@ -13,7 +14,7 @@ def _request_metadata(request):
 
 
 def create_contact_inquiry(*, request, cleaned_data):
-    return Inquiry.objects.create(
+    inquiry = Inquiry.objects.create(
         type=Inquiry.Type.CONTACT,
         name=cleaned_data["name"],
         email=cleaned_data["email"],
@@ -22,6 +23,10 @@ def create_contact_inquiry(*, request, cleaned_data):
         message=cleaned_data["message"],
         **_request_metadata(request),
     )
+
+    notify_new_inquiry(inquiry)
+
+    return inquiry
 
 
 def create_project_inquiry(*, request, cleaned_data):
@@ -38,5 +43,6 @@ def create_project_inquiry(*, request, cleaned_data):
     )
 
     convert_project_inquiry_to_lead(inquiry)
+    notify_new_inquiry(inquiry)
 
     return inquiry

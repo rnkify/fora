@@ -58,6 +58,86 @@
 
 <section class="fora-section-tight border-b border-fora-border">
   <div class="fora-container">
+
+    <div class="fora-ops-panel-head px-0">
+      <div>
+        <p class="fora-eyebrow">Analytics</p>
+        <h2 class="fora-subheading">Funnel overview</h2>
+      </div>
+    </div>
+
+    <div class="fora-ops-metrics mt-7">
+      <article class="fora-card fora-ops-stat-card">
+        <p class="fora-ops-stat-label">Page views</p>
+        <p class="fora-ops-stat-value">{{ analytics.page_views }}</p>
+      </article>
+
+      <article class="fora-card fora-ops-stat-card">
+        <p class="fora-ops-stat-label">Pricing views</p>
+        <p class="fora-ops-stat-value">{{ analytics.pricing_views }}</p>
+      </article>
+
+      <article class="fora-card fora-ops-stat-card">
+        <p class="fora-ops-stat-label">Project form starts</p>
+        <p class="fora-ops-stat-value">{{ analytics.project_form_started }}</p>
+      </article>
+
+      <article class="fora-card fora-ops-stat-card">
+        <p class="fora-ops-stat-label">Project submissions</p>
+        <p class="fora-ops-stat-value">{{ analytics.project_form_submitted }}</p>
+      </article>
+    </div>
+
+    <div class="fora-ops-grid mt-4">
+      <article class="fora-card p-6">
+        <p class="fora-ops-row-kicker">Projects won</p>
+
+        <div class="mt-5 flex items-end justify-between gap-6">
+          <p class="fora-ops-stat-value">
+            {{ analytics.project_won }}
+          </p>
+
+          <p class="text-sm text-fora-text-muted">
+            Recorded conversion events
+          </p>
+        </div>
+      </article>
+
+      <article class="fora-card p-6">
+        <p class="fora-ops-row-kicker">Projects delivered</p>
+
+        <div class="mt-5 flex items-end justify-between gap-6">
+          <p class="fora-ops-stat-value">
+            {{ analytics.project_delivered }}
+          </p>
+
+          <p class="text-sm text-fora-text-muted">
+            Completed delivery events
+          </p>
+        </div>
+      </article>
+
+      <article class="fora-card p-6">
+        <p class="fora-ops-row-kicker">Won project value</p>
+
+        <div class="mt-5 flex items-end justify-between gap-6">
+          <p class="text-3xl font-semibold tracking-[-0.05em]">
+            ${{ analytics.won_project_value }}
+          </p>
+
+          <p class="text-sm text-fora-text-muted">
+            Configured project value
+          </p>
+        </div>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="fora-section-tight border-b border-fora-border">
+  <div class="fora-container">
     <div class="fora-card fora-ops-panel">
       <div class="fora-ops-panel-head">
         <div>

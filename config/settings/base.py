@@ -125,6 +125,12 @@ DEFAULT_FROM_EMAIL = env(
     "Fora <noreply@localhost>",
 )
 
+
+INQUIRY_NOTIFICATION_EMAIL = env(
+    "INQUIRY_NOTIFICATION_EMAIL",
+    "",
+)
+
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 

@@ -1,6 +1,8 @@
 from django.http import Http404
 from django.shortcuts import redirect, render
 
+from apps.analytics.models import AnalyticsEvent
+from apps.analytics.services import record_request_event
 from apps.core.configuration import (
     get_enabled_plans,
     get_enabled_services,
@@ -18,6 +20,12 @@ from apps.marketing.services import (
 
 
 def home(request):
+    record_request_event(
+        request=request,
+        event=AnalyticsEvent.Event.PAGE_VIEW,
+        metadata={"page": "home"},
+    )
+
     return render(
         request,
         "pages/home.html",
@@ -31,6 +39,12 @@ def home(request):
 
 
 def services(request):
+    record_request_event(
+        request=request,
+        event=AnalyticsEvent.Event.PAGE_VIEW,
+        metadata={"page": "services"},
+    )
+
     return render(
         request,
         "pages/services.html",
@@ -50,6 +64,15 @@ def _service_page(request, service_id):
 
     if service is None:
         raise Http404("Service not found.")
+
+    record_request_event(
+        request=request,
+        event=AnalyticsEvent.Event.SERVICE_VIEW,
+        metadata={
+            "service_id": service.id,
+            "service_name": service.name,
+        },
+    )
 
     return render(
         request,
@@ -77,6 +100,11 @@ def service_automation(request):
 
 
 def pricing(request):
+    record_request_event(
+        request=request,
+        event=AnalyticsEvent.Event.PRICING_VIEW,
+    )
+
     return render(
         request,
         "pages/pricing.html",
@@ -125,14 +153,29 @@ def faq(request):
 def contact(request):
     submitted = request.GET.get("submitted") == "1"
 
+    if request.method == "GET" and not submitted:
+        record_request_event(
+            request=request,
+            event=AnalyticsEvent.Event.CONTACT_STARTED,
+        )
+
     if request.method == "POST":
         form = ContactForm(request.POST)
 
         if form.is_valid():
-            create_contact_inquiry(
+            inquiry = create_contact_inquiry(
                 request=request,
                 cleaned_data=form.cleaned_data,
             )
+
+            record_request_event(
+                request=request,
+                event=AnalyticsEvent.Event.CONTACT_SUBMITTED,
+                metadata={
+                    "inquiry_id": inquiry.pk,
+                },
+            )
+
             return redirect("/contact/?submitted=1")
     else:
         form = ContactForm()
@@ -151,14 +194,31 @@ def contact(request):
 def start_project(request):
     submitted = request.GET.get("submitted") == "1"
 
+    if request.method == "GET" and not submitted:
+        record_request_event(
+            request=request,
+            event=AnalyticsEvent.Event.PROJECT_FORM_STARTED,
+        )
+
     if request.method == "POST":
         form = ProjectInquiryForm(request.POST)
 
         if form.is_valid():
-            create_project_inquiry(
+            inquiry = create_project_inquiry(
                 request=request,
                 cleaned_data=form.cleaned_data,
             )
+
+            record_request_event(
+                request=request,
+                event=AnalyticsEvent.Event.PROJECT_FORM_SUBMITTED,
+                metadata={
+                    "inquiry_id": inquiry.pk,
+                    "service_id": inquiry.service_interest_id,
+                    "plan_id": inquiry.plan_interest_id,
+                },
+            )
+
             return redirect("/start/?submitted=1")
     else:
         form = ProjectInquiryForm()

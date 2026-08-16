@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
+from apps.analytics.models import AnalyticsEvent
+from apps.analytics.services import record_event
 from apps.clients.models import Client
 from apps.leads.models import Lead, LeadActivity
 from apps.projects.models import Project
@@ -83,6 +85,22 @@ def start_project_from_won_lead(*, lead_id: int) -> Project:
         type=LeadActivity.Type.STATUS_CHANGE,
         note=f"Lead moved into delivery as project #{project.pk}.",
         occurred_at=timezone.now(),
+    )
+
+    record_event(
+        event=AnalyticsEvent.Event.PROJECT_WON,
+        lead_id=lead.pk,
+        project_id=project.pk,
+        metadata={
+            "service_id": project.service_id,
+            "plan_id": project.plan_id,
+            "price": (
+                str(project.price_snapshot)
+                if project.price_snapshot is not None
+                else None
+            ),
+            "currency": project.currency,
+        },
     )
 
     return project

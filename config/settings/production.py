@@ -29,3 +29,5 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 CSRF_TRUSTED_ORIGINS = env_list(
     "CSRF_TRUSTED_ORIGINS",
 )
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
