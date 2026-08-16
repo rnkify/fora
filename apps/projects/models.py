@@ -2,9 +2,18 @@ from django.db import models
 
 from apps.clients.models import Client
 from apps.core.models import TimeStampedModel
+from apps.leads.models import Lead
 
 
 class Project(TimeStampedModel):
+    source_lead = models.OneToOneField(
+        Lead,
+        on_delete=models.PROTECT,
+        related_name="project",
+        null=True,
+        blank=True,
+    )
+
     class Status(models.TextChoices):
         ONBOARDING = "onboarding", "Onboarding"
         RESEARCH = "research", "Research"

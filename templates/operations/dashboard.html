@@ -1,0 +1,434 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Operations — {{ fora.brand.name }}{% endblock %}
+
+{% block content %}
+
+<section class="fora-section-tight border-b border-fora-border">
+  <div class="fora-container">
+    <div class="fora-ops-shell">
+
+      <div class="fora-ops-hero">
+        <div class="max-w-3xl">
+          <p class="fora-eyebrow">
+            Operations
+          </p>
+
+          <h1 class="fora-heading">
+            Business overview.
+          </h1>
+
+          <p class="fora-copy-lg mt-5 max-w-2xl">
+            Leads, projects, follow-ups, and acquisition activity in one place.
+          </p>
+        </div>
+
+        <div class="fora-ops-actions">
+          {% include "components/button_secondary.html" with href="/admin/" label="Open Admin" %}
+          {% include "components/button_primary.html" with href="/admin/leads/lead/add/" label="Add Lead" %}
+        </div>
+      </div>
+
+      <div class="fora-ops-metrics">
+        <article class="fora-card fora-ops-stat-card">
+          <p class="fora-ops-stat-label">New leads</p>
+          <p class="fora-ops-stat-value">{{ metrics.new_leads }}</p>
+        </article>
+
+        <article class="fora-card fora-ops-stat-card">
+          <p class="fora-ops-stat-label">Active projects</p>
+          <p class="fora-ops-stat-value">{{ metrics.active_projects }}</p>
+        </article>
+
+        <article class="fora-card fora-ops-stat-card">
+          <p class="fora-ops-stat-label">Overdue tasks</p>
+          <p class="fora-ops-stat-value">{{ metrics.overdue_tasks }}</p>
+        </article>
+
+        <article class="fora-card fora-ops-stat-card">
+          <p class="fora-ops-stat-label">Unhandled inquiries</p>
+          <p class="fora-ops-stat-value">{{ metrics.unhandled_inquiries }}</p>
+        </article>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="fora-section-tight border-b border-fora-border">
+  <div class="fora-container">
+    <div class="fora-card fora-ops-panel">
+      <div class="fora-ops-panel-head">
+        <div>
+          <p class="fora-eyebrow">Pipeline</p>
+          <h2 class="fora-subheading">Lead stages</h2>
+        </div>
+      </div>
+
+      <div class="fora-ops-panel-body">
+        {% if pipeline %}
+          <div class="fora-ops-pipeline">
+            {% for row in pipeline %}
+              <article class="fora-ops-pipeline-item">
+                <p class="fora-ops-pipeline-label">
+                  {{ row.status|title }}
+                </p>
+
+                <p class="fora-ops-pipeline-value">
+                  {{ row.total }}
+                </p>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="fora-ops-empty">
+            No leads in the pipeline yet.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="fora-section-tight">
+  <div class="fora-container">
+    <div class="fora-ops-split">
+
+      <div class="fora-card fora-ops-panel">
+        <div class="fora-ops-panel-head">
+          <div>
+            <p class="fora-eyebrow">CRM</p>
+            <h2 class="fora-subheading">New leads</h2>
+          </div>
+        </div>
+
+        <div class="fora-ops-panel-body">
+          {% if new_leads %}
+            <div class="fora-ops-list">
+              {% for lead in new_leads %}
+                <article class="fora-ops-row md:grid-cols-[1fr_auto] md:items-start">
+                  <div>
+                    <p class="fora-ops-row-title">
+                      {{ lead.company.name }}
+                    </p>
+
+                    {% if lead.primary_contact %}
+                      <p class="fora-ops-row-meta">
+                        {{ lead.primary_contact.name }} · {{ lead.primary_contact.email }}
+                      </p>
+                    {% endif %}
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      {% if lead.service_interest_id %}
+                        <span class="fora-ops-tag">
+                          {{ lead.service_interest_id }}
+                        </span>
+                      {% endif %}
+
+                      {% if lead.plan_interest_id %}
+                        <span class="fora-ops-tag">
+                          {{ lead.plan_interest_id }}
+                        </span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="fora-ops-row-side">
+                    <span class="fora-ops-row-kicker">
+                      {{ lead.status|title }}
+                    </span>
+
+                    <a
+                      href="/admin/leads/lead/{{ lead.id }}/change/"
+                      class="fora-ops-row-link"
+                    >
+                      Open →
+                    </a>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="fora-ops-empty">
+              No new leads.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+
+      <div class="fora-card fora-ops-panel">
+        <div class="fora-ops-panel-head">
+          <div>
+            <p class="fora-eyebrow">Follow-up</p>
+            <h2 class="fora-subheading">Next 7 days</h2>
+          </div>
+        </div>
+
+        <div class="fora-ops-panel-body">
+          {% if upcoming_followups %}
+            <div class="fora-ops-list">
+              {% for lead in upcoming_followups %}
+                <article class="fora-ops-row md:grid-cols-[1fr_auto] md:items-start">
+                  <div>
+                    <p class="fora-ops-row-title">
+                      {{ lead.company.name }}
+                    </p>
+
+                    <p class="fora-ops-row-meta">
+                      {{ lead.next_action_at }}
+                    </p>
+                  </div>
+
+                  <div class="fora-ops-row-side">
+                    <a
+                      href="/admin/leads/lead/{{ lead.id }}/change/"
+                      class="fora-ops-row-link"
+                    >
+                      Open →
+                    </a>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="fora-ops-empty">
+              No follow-ups scheduled.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="fora-section-tight">
+  <div class="fora-container">
+    <div class="fora-card fora-ops-panel">
+      <div class="fora-ops-panel-head">
+        <div>
+          <p class="fora-eyebrow">Delivery</p>
+          <h2 class="fora-subheading">Won leads ready to start</h2>
+        </div>
+      </div>
+
+      <div class="fora-ops-panel-body">
+        {% if won_leads_ready %}
+          <div class="fora-ops-list">
+            {% for lead in won_leads_ready %}
+              <article class="fora-ops-row md:grid-cols-[1fr_auto] md:items-center">
+                <div>
+                  <p class="fora-ops-row-title">
+                    {{ lead.company.name }}
+                  </p>
+
+                  {% if lead.primary_contact %}
+                    <p class="fora-ops-row-meta">
+                      {{ lead.primary_contact.name }} · {{ lead.primary_contact.email }}
+                    </p>
+                  {% endif %}
+
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    {% if lead.service_interest_id %}
+                      <span class="fora-ops-tag">
+                        {{ lead.service_interest_id }}
+                      </span>
+                    {% endif %}
+
+                    {% if lead.plan_interest_id %}
+                      <span class="fora-ops-tag">
+                        {{ lead.plan_interest_id }}
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <form
+                  method="post"
+                  action="{% url 'operations:start_project' lead.id %}"
+                >
+                  {% csrf_token %}
+
+                  <button
+                    type="submit"
+                    class="fora-button fora-button-primary"
+                  >
+                    Start Project
+                  </button>
+                </form>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="fora-ops-empty">
+            No won leads are waiting to enter delivery.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="fora-section-tight">
+  <div class="fora-container">
+    <div class="fora-ops-grid">
+
+      <div class="fora-card fora-ops-panel">
+        <div class="fora-ops-panel-head">
+          <div>
+            <p class="fora-eyebrow">Projects</p>
+            <h2 class="fora-subheading">Active work</h2>
+          </div>
+        </div>
+
+        <div class="fora-ops-panel-body">
+          {% if active_projects %}
+            <div class="fora-ops-list">
+              {% for project in active_projects %}
+                <article class="fora-ops-row md:grid-cols-[1fr_auto] md:items-start">
+                  <div>
+                    <p class="fora-ops-row-title">
+                      {{ project.client.company.name }}
+                    </p>
+
+                    <p class="fora-ops-row-meta">
+                      {{ project.plan_name_snapshot }}
+                    </p>
+
+                    {% if project.due_at %}
+                      <p class="mt-3 text-sm text-fora-text-subtle">
+                        Due {{ project.due_at }}
+                      </p>
+                    {% endif %}
+                  </div>
+
+                  <div class="fora-ops-row-side">
+                    <span class="fora-ops-row-kicker">
+                      {{ project.status|title }}
+                    </span>
+
+                    <a
+                      href="/admin/projects/project/{{ project.id }}/change/"
+                      class="fora-ops-row-link"
+                    >
+                      Open →
+                    </a>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="fora-ops-empty">
+              No active projects.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+
+      <div class="fora-card fora-ops-panel">
+        <div class="fora-ops-panel-head">
+          <div>
+            <p class="fora-eyebrow">Tasks</p>
+            <h2 class="fora-subheading">Overdue</h2>
+          </div>
+        </div>
+
+        <div class="fora-ops-panel-body">
+          {% if overdue_tasks %}
+            <div class="fora-ops-list">
+              {% for task in overdue_tasks %}
+                <article class="fora-ops-row">
+                  <div>
+                    <p class="fora-ops-row-title">
+                      {{ task.title }}
+                    </p>
+
+                    <p class="fora-ops-row-meta">
+                      {{ task.project.client.company.name }}
+                    </p>
+
+                    <p class="mt-3 text-sm text-fora-danger">
+                      Due {{ task.due_at }}
+                    </p>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="fora-ops-empty">
+              No overdue tasks.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+
+      <div class="fora-card fora-ops-panel">
+        <div class="fora-ops-panel-head">
+          <div>
+            <p class="fora-eyebrow">Acquisition</p>
+            <h2 class="fora-subheading">Recent inquiries</h2>
+          </div>
+        </div>
+
+        <div class="fora-ops-panel-body">
+          {% if recent_inquiries %}
+            <div class="fora-ops-list">
+              {% for inquiry in recent_inquiries %}
+                <article class="fora-ops-row md:grid-cols-[1fr_auto] md:items-start">
+                  <div>
+                    <p class="fora-ops-row-title">
+                      {{ inquiry.name }}
+                    </p>
+
+                    <p class="fora-ops-row-meta">
+                      {{ inquiry.email }}
+                    </p>
+                  </div>
+
+                  <div class="fora-ops-row-side">
+                    <span class="fora-ops-tag">
+                      {{ inquiry.type|title }}
+                    </span>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="fora-ops-empty">
+              No inquiries yet.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+
+      <div class="fora-card fora-ops-panel">
+        <div class="fora-ops-panel-head">
+          <div>
+            <p class="fora-eyebrow">Shortcuts</p>
+            <h2 class="fora-subheading">Quick actions</h2>
+          </div>
+        </div>
+
+        <div class="fora-ops-panel-body">
+          <div class="grid gap-3">
+            <a href="/admin/leads/lead/" class="fora-ops-row-link">Open lead list →</a>
+            <a href="/admin/clients/client/" class="fora-ops-row-link">Open clients →</a>
+            <a href="/admin/projects/project/" class="fora-ops-row-link">Open projects →</a>
+            <a href="/admin/marketing/inquiry/" class="fora-ops-row-link">Open inquiries →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

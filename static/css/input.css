@@ -476,3 +476,209 @@
     }
   }
 }
+
+@layer components {
+  .fora-ops-shell {
+    display: grid;
+    gap: clamp(2rem, 3vw, 3rem);
+  }
+
+  .fora-ops-hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .fora-ops-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+  }
+
+  .fora-ops-actions .fora-button,
+  .fora-ops-actions a {
+    white-space: nowrap;
+  }
+
+  .fora-ops-metrics {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .fora-ops-stat-card {
+    min-height: 9rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.35rem;
+  }
+
+  .fora-ops-stat-label {
+    font-size: 0.92rem;
+    color: var(--color-fora-text-muted);
+  }
+
+  .fora-ops-stat-value {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: -0.06em;
+  }
+
+  .fora-ops-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fora-ops-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  .fora-ops-panel-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.4rem 1.4rem 0;
+  }
+
+  .fora-ops-panel-body {
+    padding: 1.25rem 1.4rem 1.4rem;
+  }
+
+  .fora-ops-list {
+    display: grid;
+    gap: 0;
+  }
+
+  .fora-ops-row {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--color-fora-border);
+  }
+
+  .fora-ops-row:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .fora-ops-row-title {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .fora-ops-row-meta {
+    margin-top: 0.3rem;
+    color: var(--color-fora-text-muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .fora-ops-row-kicker {
+    color: var(--color-fora-text-subtle);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .fora-ops-row-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+
+  .fora-ops-row-link {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--color-fora-text);
+    transition: opacity 160ms ease;
+  }
+
+  .fora-ops-row-link:hover {
+    opacity: 0.72;
+  }
+
+  .fora-ops-empty {
+    color: var(--color-fora-text-muted);
+    font-size: 0.97rem;
+    line-height: 1.7;
+    padding: 0.15rem 0 0.2rem;
+  }
+
+  .fora-ops-pipeline {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  .fora-ops-pipeline-item {
+    padding: 1rem 1.05rem;
+    border: 1px solid var(--color-fora-border);
+    border-radius: var(--radius-fora-md);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .fora-ops-pipeline-label {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-fora-text-subtle);
+  }
+
+  .fora-ops-pipeline-value {
+    margin-top: 0.75rem;
+    font-size: 1.8rem;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+  }
+
+  .fora-ops-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--color-fora-border);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.03);
+    font-size: 0.78rem;
+    color: var(--color-fora-text-muted);
+    white-space: nowrap;
+  }
+
+  .fora-ops-split {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1.2fr 1fr;
+  }
+
+  @media (max-width: 1100px) {
+    .fora-ops-metrics,
+    .fora-ops-grid,
+    .fora-ops-split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 800px) {
+    .fora-ops-metrics,
+    .fora-ops-grid,
+    .fora-ops-split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .fora-ops-stat-card {
+      min-height: 7.75rem;
+    }
+  }
+}
