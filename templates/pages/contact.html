@@ -2,25 +2,90 @@
 
 {% block title %}Contact — {{ fora.brand.name }}{% endblock %}
 
+{% block meta_description %}
+Contact Fora about AI systems, conversion work, partnerships, or general questions.
+{% endblock %}
+
 {% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      Contact
-    </p>
 
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      Talk to Fora.
-    </h1>
+{% include "components/page_hero.html" with eyebrow="Contact" title="Start with the question." description="Use this page for general questions, partnerships, or anything that does not need a full project brief." %}
 
-    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
-      Tell us what you are trying to improve and we will determine the
-      smallest useful next step.
-    </p>
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="fora-content-grid">
 
-    <div class="mt-10">
-      {% include "components/button_primary.html" with href="/start/" label="Start a Project" %}
+      <div>
+        <p class="fora-eyebrow">
+          Get in touch
+        </p>
+
+        <h2 class="fora-heading">
+          Keep it simple.
+        </h2>
+
+        <p class="fora-copy mt-6 max-w-xl">
+          Describe what you need and include enough context for Fora to understand
+          the situation. If it is clearly a project request, you can use the
+          structured project form instead.
+        </p>
+
+        <div class="mt-8">
+          {% include "components/button_secondary.html" with href="/start/" label="Use Project Form" %}
+        </div>
+      </div>
+
+      <div>
+        {% if submitted %}
+          <div class="fora-card p-8">
+            <p class="fora-eyebrow">
+              Received
+            </p>
+
+            <h2 class="fora-subheading">
+              Your message has been submitted.
+            </h2>
+
+            <p class="fora-copy mt-4">
+              Fora has the details needed to review your inquiry.
+            </p>
+          </div>
+        {% else %}
+          <form method="post" class="grid gap-6" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+              <div>
+                <label
+                  for="{{ field.id_for_label }}"
+                  class="mb-2 block text-sm font-semibold text-fora-text"
+                >
+                  {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.errors %}
+                  <div class="mt-2 text-sm text-fora-danger">
+                    {{ field.errors|striptags }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            <div class="pt-2">
+              <button
+                type="submit"
+                class="fora-button fora-button-primary"
+              >
+                Send Message
+              </button>
+            </div>
+          </form>
+        {% endif %}
+      </div>
+
     </div>
   </div>
 </section>
+
 {% endblock %}

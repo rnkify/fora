@@ -45,7 +45,39 @@
         {% endfor %}
       </nav>
 
-      {% include "components/button_primary.html" with href=fora.primary_cta.href label=fora.primary_cta.label %}
+      <div class="hidden md:block">
+        {% include "components/button_primary.html" with href=fora.primary_cta.href label=fora.primary_cta.label %}
+      </div>
+
+      <details class="fora-mobile-menu md:hidden">
+        <summary
+          class="fora-mobile-menu-trigger"
+          aria-label="Open navigation"
+        >
+          <span></span>
+          <span></span>
+        </summary>
+
+        <div class="fora-mobile-menu-panel">
+          <nav
+            class="grid gap-1"
+            aria-label="Mobile navigation"
+          >
+            {% for item in fora.navigation %}
+              <a
+                href="{{ item.href }}"
+                class="fora-mobile-nav-link"
+              >
+                {{ item.label }}
+              </a>
+            {% endfor %}
+          </nav>
+
+          <div class="mt-6">
+            {% include "components/button_primary.html" with href=fora.primary_cta.href label=fora.primary_cta.label %}
+          </div>
+        </div>
+      </details>
     </div>
   </header>
 

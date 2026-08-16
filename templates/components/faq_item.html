@@ -1,0 +1,26 @@
+<details class="group border-t border-fora-border py-6">
+  <summary
+    class="
+      flex cursor-pointer list-none items-center justify-between gap-6
+      text-lg font-medium tracking-[-0.02em]
+    "
+  >
+    <span>
+      {{ item.question }}
+    </span>
+
+    <span
+      aria-hidden="true"
+      class="
+        text-fora-text-muted transition-transform duration-200
+        group-open:rotate-45
+      "
+    >
+      +
+    </span>
+  </summary>
+
+  <p class="fora-copy mt-4 max-w-3xl">
+    {{ item.answer }}
+  </p>
+</details>

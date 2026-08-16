@@ -2,22 +2,84 @@
 
 {% block title %}About — {{ fora.brand.name }}{% endblock %}
 
+{% block meta_description %}
+Fora is an AI systems and growth studio focused on reusable systems, stronger communication, and practical business outcomes.
+{% endblock %}
+
 {% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      About
-    </p>
 
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      AI systems and growth work designed to remain useful after delivery.
-    </h1>
+{% include "components/page_hero.html" with eyebrow="About Fora" title="A systems-first partner for modern business work." description="Fora exists to help growing businesses use AI, messaging, and repeatable workflows more effectively without adding unnecessary complexity." primary_label="Start a Project" primary_href=fora.primary_cta.href secondary_label="See How We Work" secondary_href="/process/" %}
 
-    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
-      Fora works across AI workflows, conversion communication,
-      content systems, and automation strategy with an emphasis on
-      repeatability, evaluation, and commercial usefulness.
-    </p>
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="fora-content-grid">
+
+      <div>
+        <p class="fora-eyebrow">Principle</p>
+
+        <h2 class="fora-heading">
+          Better systems are more valuable than more output.
+        </h2>
+      </div>
+
+      <div class="fora-content-stack">
+        <p class="fora-copy-lg">
+          Fora is built around a simple idea: businesses benefit more from reliable systems than from isolated pieces of work that have to be recreated every time.
+        </p>
+
+        <p class="fora-copy">
+          That means prompt engineering is treated as part of AI system design, copywriting is connected to positioning and conversion goals, and content work is structured so it can become repeatable.
+        </p>
+
+        <p class="fora-copy">
+          The company is intentionally broad enough to expand into AI consulting, automation, digital products, subscriptions, agency services, and software-enabled services over time.
+        </p>
+      </div>
+
+    </div>
   </div>
 </section>
+
+<section class="fora-section-tight border-y border-fora-border">
+  <div class="fora-container">
+
+    {% include "components/section_header.html" with eyebrow="How Fora operates" title="A small set of rules guide the work." %}
+
+    <div class="fora-grid-3">
+      <article class="border-t border-fora-border pt-7">
+        <h3 class="fora-subheading">
+          Commercially useful
+        </h3>
+
+        <p class="fora-copy mt-4">
+          Every engagement should connect to a real business objective rather than existing only because a tool or technique is interesting.
+        </p>
+      </article>
+
+      <article class="border-t border-fora-border pt-7">
+        <h3 class="fora-subheading">
+          Systemized
+        </h3>
+
+        <p class="fora-copy mt-4">
+          Useful work should become easier to repeat, maintain, test, and hand off instead of remaining dependent on one person.
+        </p>
+      </article>
+
+      <article class="border-t border-fora-border pt-7">
+        <h3 class="fora-subheading">
+          Deliberately simple
+        </h3>
+
+        <p class="fora-copy mt-4">
+          Fora avoids adding complexity unless it materially improves the quality, speed, reliability, or commercial value of the work.
+        </p>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+{% include "components/cta_panel.html" with eyebrow="Work with Fora" title="Bring the problem. We will define the system." description="Start with a focused project and expand only when the work demonstrates a reason to." label="Start a Project" href=fora.primary_cta.href %}
+
 {% endblock %}

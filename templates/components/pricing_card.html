@@ -1,0 +1,58 @@
+<article
+  class="
+    fora-card flex h-full flex-col p-7
+    {% if plan.highlighted %}
+      border-fora-border-strong bg-fora-surface-raised
+    {% endif %}
+  "
+>
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h3 class="fora-subheading">
+        {{ plan.name }}
+      </h3>
+
+      <p class="fora-copy mt-3">
+        {{ plan.description }}
+      </p>
+    </div>
+
+    {% if plan.highlighted %}
+      <span class="fora-badge">
+        Recommended
+      </span>
+    {% endif %}
+  </div>
+
+  <div class="mt-8">
+    <span class="text-4xl font-semibold tracking-[-0.05em]">
+      ${{ plan.price }}
+    </span>
+
+    <span class="ml-2 text-sm text-fora-text-muted">
+      {{ plan.currency }}
+    </span>
+  </div>
+
+  <p class="mt-2 text-sm text-fora-text-subtle">
+    {{ plan.billing_period }}
+  </p>
+
+  <ul class="mt-8 grid gap-3 text-sm text-fora-text-muted">
+    {% for item in plan.deliverables %}
+      <li class="flex gap-3">
+        <span aria-hidden="true" class="text-fora-text">
+          ✓
+        </span>
+
+        <span>
+          {{ item }}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <div class="mt-auto pt-9">
+    {% include "components/button_secondary.html" with href=fora.primary_cta.href label=plan.cta_label %}
+  </div>
+</article>

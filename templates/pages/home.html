@@ -38,21 +38,7 @@
 
     <div class="fora-grid-4">
       {% for service in services %}
-        <article class="fora-card fora-card-interactive p-7">
-          <div class="mb-10">
-            <span class="fora-badge">
-              0{{ forloop.counter }}
-            </span>
-          </div>
-
-          <h3 class="fora-subheading">
-            {{ service.name }}
-          </h3>
-
-          <p class="fora-copy mt-4">
-            {{ service.short_description }}
-          </p>
-        </article>
+        {% include "components/service_card.html" with service=service number=forloop.counter|stringformat:"02d" %}
       {% endfor %}
     </div>
 
@@ -117,36 +103,7 @@
 
     <div class="fora-grid-4">
       {% for plan in plans %}
-        <article
-          class="
-            fora-card p-7
-            {% if plan.highlighted %}
-              border-fora-border-strong bg-fora-surface-raised
-            {% endif %}
-          "
-        >
-          {% if plan.highlighted %}
-            <span class="fora-badge">
-              Recommended
-            </span>
-          {% endif %}
-
-          <h3 class="fora-subheading mt-6">
-            {{ plan.name }}
-          </h3>
-
-          <p class="mt-8 text-4xl font-semibold tracking-[-0.05em]">
-            ${{ plan.price }}
-          </p>
-
-          <p class="mt-2 text-sm text-fora-text-muted">
-            {{ plan.billing_period }}
-          </p>
-
-          <div class="mt-8">
-            {% include "components/button_secondary.html" with href=fora.primary_cta.href label=plan.cta_label %}
-          </div>
-        </article>
+        {% include "components/pricing_card.html" with plan=plan %}
       {% endfor %}
     </div>
 
@@ -161,17 +118,7 @@
 
     <div class="mx-auto max-w-4xl">
       {% for item in faqs %}
-        <details class="group border-t border-fora-border py-6">
-          <summary
-            class="cursor-pointer list-none text-lg font-medium tracking-[-0.02em]"
-          >
-            {{ item.question }}
-          </summary>
-
-          <p class="fora-copy mt-4 max-w-3xl">
-            {{ item.answer }}
-          </p>
-        </details>
+        {% include "components/faq_item.html" with item=item %}
       {% endfor %}
     </div>
 

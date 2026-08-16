@@ -371,3 +371,108 @@
     }
   }
 }
+
+@layer components {
+  .fora-mobile-menu {
+    position: relative;
+  }
+
+  .fora-mobile-menu summary {
+    list-style: none;
+  }
+
+  .fora-mobile-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .fora-mobile-menu-trigger {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-content: center;
+    gap: 0.36rem;
+    cursor: pointer;
+    border: 1px solid var(--color-fora-border);
+    border-radius: var(--radius-fora-sm);
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .fora-mobile-menu-trigger span {
+    display: block;
+    width: 1rem;
+    height: 1px;
+    background: var(--color-fora-text);
+    transition:
+      transform 200ms var(--ease-fora),
+      opacity 200ms ease;
+  }
+
+  .fora-mobile-menu[open]
+  .fora-mobile-menu-trigger
+  span:first-child {
+    transform: translateY(0.22rem) rotate(45deg);
+  }
+
+  .fora-mobile-menu[open]
+  .fora-mobile-menu-trigger
+  span:last-child {
+    transform: translateY(-0.22rem) rotate(-45deg);
+  }
+
+  .fora-mobile-menu-panel {
+    position: absolute;
+    top: calc(100% + 0.9rem);
+    right: 0;
+    width: min(20rem, calc(100vw - 2rem));
+    padding: 1rem;
+    border: 1px solid var(--color-fora-border);
+    border-radius: var(--radius-fora-md);
+    background: rgba(15, 17, 23, 0.98);
+    box-shadow: var(--shadow-fora-float);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .fora-mobile-nav-link {
+    display: block;
+    padding: 0.85rem 0.9rem;
+    border-radius: var(--radius-fora-sm);
+    color: var(--color-fora-text-muted);
+    font-size: 0.98rem;
+    transition:
+      color 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .fora-mobile-nav-link:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-fora-text);
+  }
+}
+
+@layer components {
+  .fora-content-grid {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 6rem);
+    grid-template-columns:
+      minmax(0, 0.8fr)
+      minmax(0, 1.2fr);
+  }
+
+  .fora-content-stack {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .fora-stat {
+    border-top: 1px solid var(--color-fora-border);
+    padding-top: 1.25rem;
+  }
+
+  @media (max-width: 800px) {
+    .fora-content-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+  }
+}

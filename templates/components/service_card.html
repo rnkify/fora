@@ -1,0 +1,24 @@
+<article class="fora-card fora-card-interactive flex h-full flex-col p-7">
+  <div class="mb-10">
+    <span class="fora-badge">
+      {{ number }}
+    </span>
+  </div>
+
+  <h3 class="fora-subheading">
+    {{ service.name }}
+  </h3>
+
+  <p class="fora-copy mt-4">
+    {{ service.short_description }}
+  </p>
+
+  <div class="mt-auto pt-8">
+    <a
+      href="/services/"
+      class="text-sm font-semibold text-fora-text transition-opacity hover:opacity-70"
+    >
+      Explore service →
+    </a>
+  </div>
+</article>

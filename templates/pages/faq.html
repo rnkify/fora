@@ -2,30 +2,56 @@
 
 {% block title %}FAQ — {{ fora.brand.name }}{% endblock %}
 
+{% block meta_description %}
+Common questions about Fora projects, AI systems, conversion work, revisions, white-label delivery, and ongoing engagements.
+{% endblock %}
+
 {% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      FAQ
-    </p>
 
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      Common questions.
-    </h1>
-  </div>
+{% include "components/page_hero.html" with eyebrow="FAQ" title="Useful answers before we start." description="The important details about scope, delivery, revisions, AI systems, and working with Fora." primary_label="Start a Project" primary_href=fora.primary_cta.href secondary_label="Contact Fora" secondary_href="/contact/" %}
 
-  <div class="mt-14 max-w-4xl divide-y divide-fora-border border-y border-fora-border">
-    {% for item in faqs %}
-      <article class="py-7">
-        <h2 class="text-xl font-semibold">
-          {{ item.question }}
-        </h2>
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="max-w-4xl">
 
-        <p class="mt-3 leading-7 text-fora-text-muted">
-          {{ item.answer }}
-        </p>
-      </article>
-    {% endfor %}
+      {% for item in faqs %}
+        {% include "components/faq_item.html" with item=item %}
+      {% endfor %}
+
+    </div>
   </div>
 </section>
+
+<section class="fora-section-tight border-y border-fora-border">
+  <div class="fora-container">
+    <div class="fora-content-grid">
+
+      <div>
+        <p class="fora-eyebrow">
+          Still unsure?
+        </p>
+
+        <h2 class="fora-heading">
+          Ask before committing.
+        </h2>
+      </div>
+
+      <div>
+        <p class="fora-copy-lg">
+          If the existing packages do not clearly match your situation, describe
+          the problem instead. Fora can determine whether a project makes sense
+          before any scope is agreed.
+        </p>
+
+        <div class="mt-8">
+          {% include "components/button_secondary.html" with href="/contact/" label="Contact Fora" %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% include "components/cta_panel.html" with eyebrow="Ready when you are" title="Start with the problem, not the package." description="A focused first conversation is enough to determine the right next step." label="Start a Project" href=fora.primary_cta.href %}
+
 {% endblock %}

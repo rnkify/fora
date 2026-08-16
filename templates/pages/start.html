@@ -2,50 +2,121 @@
 
 {% block title %}Start a Project — {{ fora.brand.name }}{% endblock %}
 
+{% block meta_description %}
+Start a project with Fora for AI systems, conversion copy, content systems, or automation consulting.
+{% endblock %}
+
 {% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      Start a Project
-    </p>
 
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      What should Fora help you improve?
-    </h1>
+{% include "components/page_hero.html" with eyebrow="Start a Project" title="Tell Fora what needs to improve." description="You do not need a perfect brief. Share the business problem, current situation, and what a useful outcome would look like." %}
 
-    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
-      The full project-intake workflow will live here. For now this route is
-      correctly connected to the project's centralized services and packages.
-    </p>
-  </div>
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="fora-content-grid">
 
-  <div class="mt-14 grid gap-8 lg:grid-cols-2">
-    <div>
-      <h2 class="text-xl font-semibold">Services</h2>
+      <div>
+        <p class="fora-eyebrow">
+          Project inquiry
+        </p>
 
-      <div class="mt-5 space-y-3">
-        {% for service in services %}
-          <div class="rounded-2xl border border-fora-border p-4">
-            {{ service.name }}
-          </div>
-        {% endfor %}
+        <h2 class="fora-heading">
+          Enough context to choose the right scope.
+        </h2>
+
+        <p class="fora-copy mt-6 max-w-xl">
+          The form is designed to understand the problem first. Service and
+          engagement selections are useful, but neither is required if you are
+          unsure.
+        </p>
+
+        <div class="fora-content-stack mt-10">
+          <article class="fora-stat">
+            <h3 class="fora-subheading">
+              01 — Problem
+            </h3>
+            <p class="fora-copy mt-3">
+              What is currently inefficient, unclear, inconsistent, or underperforming?
+            </p>
+          </article>
+
+          <article class="fora-stat">
+            <h3 class="fora-subheading">
+              02 — Outcome
+            </h3>
+            <p class="fora-copy mt-3">
+              What would make the engagement useful from a business perspective?
+            </p>
+          </article>
+
+          <article class="fora-stat">
+            <h3 class="fora-subheading">
+              03 — Scope
+            </h3>
+            <p class="fora-copy mt-3">
+              Fora can recommend an appropriate package after reviewing the request.
+            </p>
+          </article>
+        </div>
       </div>
-    </div>
 
-    <div>
-      <h2 class="text-xl font-semibold">Engagements</h2>
+      <div>
+        {% if submitted %}
+          <div class="fora-card p-8">
+            <p class="fora-eyebrow">
+              Project received
+            </p>
 
-      <div class="mt-5 space-y-3">
-        {% for plan in plans %}
-          <div class="rounded-2xl border border-fora-border p-4">
-            <div class="flex items-center justify-between gap-4">
-              <span>{{ plan.name }}</span>
-              <span class="text-fora-text-muted">${{ plan.price }}</span>
+            <h2 class="fora-subheading">
+              Your project inquiry has been submitted.
+            </h2>
+
+            <p class="fora-copy mt-4">
+              The request has been stored for review along with the project details you provided.
+            </p>
+          </div>
+        {% else %}
+          <form method="post" class="grid gap-6" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+              <div>
+                <label
+                  for="{{ field.id_for_label }}"
+                  class="mb-2 block text-sm font-semibold text-fora-text"
+                >
+                  {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                  <p class="mt-2 text-sm text-fora-text-subtle">
+                    {{ field.help_text }}
+                  </p>
+                {% endif %}
+
+                {% if field.errors %}
+                  <div class="mt-2 text-sm text-fora-danger">
+                    {{ field.errors|striptags }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            <div class="pt-2">
+              <button
+                type="submit"
+                class="fora-button fora-button-primary"
+              >
+                Submit Project
+              </button>
             </div>
-          </div>
-        {% endfor %}
+          </form>
+        {% endif %}
       </div>
+
     </div>
   </div>
 </section>
+
 {% endblock %}

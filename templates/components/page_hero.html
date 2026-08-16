@@ -1,0 +1,31 @@
+<section class="fora-section-tight border-b border-fora-border">
+  <div class="fora-container">
+    <div class="max-w-4xl">
+      {% if eyebrow %}
+        <p class="fora-eyebrow">
+          {{ eyebrow }}
+        </p>
+      {% endif %}
+
+      <h1 class="fora-heading">
+        {{ title }}
+      </h1>
+
+      {% if description %}
+        <p class="fora-copy-lg mt-6 max-w-3xl">
+          {{ description }}
+        </p>
+      {% endif %}
+
+      {% if primary_label and primary_href %}
+        <div class="mt-9 flex flex-wrap gap-3">
+          {% include "components/button_primary.html" with href=primary_href label=primary_label %}
+
+          {% if secondary_label and secondary_href %}
+            {% include "components/button_secondary.html" with href=secondary_href label=secondary_label %}
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>

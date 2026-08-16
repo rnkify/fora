@@ -2,36 +2,72 @@
 
 {% block title %}Process — {{ fora.brand.name }}{% endblock %}
 
+{% block meta_description %}
+How Fora researches, builds, evaluates, refines, and delivers AI systems and conversion-focused work.
+{% endblock %}
+
 {% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      Process
-    </p>
 
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      Structured from problem to delivery.
-    </h1>
+{% include "components/page_hero.html" with eyebrow="Process" title="A clear path from problem to usable system." description=process.intro primary_label="Start a Project" primary_href=fora.primary_cta.href secondary_label="View Services" secondary_href="/services/" %}
 
-    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
-      {{ process.intro }}
-    </p>
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="fora-grid-4">
+      {% for step in home.process_steps %}
+        <article class="border-t border-fora-border pt-7">
+          <p class="text-sm font-semibold text-fora-text-subtle">
+            {{ step.number }}
+          </p>
+
+          <h2 class="fora-subheading mt-8">
+            {{ step.title }}
+          </h2>
+
+          <p class="fora-copy mt-4">
+            {{ step.description }}
+          </p>
+        </article>
+      {% endfor %}
+    </div>
   </div>
-
-  <div class="mt-14 grid gap-5 md:grid-cols-2">
-    {% for step in home.process_steps %}
-      <article class="rounded-3xl border border-fora-border p-7">
-        <p class="text-sm text-fora-text-muted">{{ step.number }}</p>
-        <h2 class="mt-4 text-2xl font-semibold">{{ step.title }}</h2>
-        <p class="mt-4 leading-7 text-fora-text-muted">
-          {{ step.description }}
-        </p>
-      </article>
-    {% endfor %}
-  </div>
-
-  <p class="mt-12 max-w-3xl leading-7 text-fora-text-muted">
-    {{ process.principle }}
-  </p>
 </section>
+
+<section class="fora-section-tight bg-fora-surface">
+  <div class="fora-container">
+    <div class="fora-content-grid">
+      <div>
+        <p class="fora-eyebrow">Operating principle</p>
+        <h2 class="fora-heading">
+          {{ process.principle }}
+        </h2>
+      </div>
+
+      <div class="fora-content-stack">
+        <article class="fora-stat">
+          <h3 class="fora-subheading">Research before production</h3>
+          <p class="fora-copy mt-3">
+            Work starts with the audience, offer, existing system, constraints, and business objective.
+          </p>
+        </article>
+
+        <article class="fora-stat">
+          <h3 class="fora-subheading">Variants where they matter</h3>
+          <p class="fora-copy mt-3">
+            Important decisions are explored through multiple useful directions rather than forcing the first idea through the process.
+          </p>
+        </article>
+
+        <article class="fora-stat">
+          <h3 class="fora-subheading">Delivery includes usability</h3>
+          <p class="fora-copy mt-3">
+            The finished work is structured and documented so the client can continue using it after the engagement ends.
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include "components/cta_panel.html" with eyebrow="Ready to begin?" title="Start with one clearly defined problem." description="The first engagement should create a useful result quickly and establish whether a broader relationship makes sense." label="Start a Project" href=fora.primary_cta.href %}
+
 {% endblock %}

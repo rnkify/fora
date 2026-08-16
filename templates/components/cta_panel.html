@@ -1,0 +1,27 @@
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="fora-card px-7 py-14 sm:px-12 lg:px-16">
+      {% if eyebrow %}
+        <p class="fora-eyebrow">
+          {{ eyebrow }}
+        </p>
+      {% endif %}
+
+      <h2 class="fora-heading max-w-4xl">
+        {{ title }}
+      </h2>
+
+      {% if description %}
+        <p class="fora-copy-lg mt-6 max-w-2xl">
+          {{ description }}
+        </p>
+      {% endif %}
+
+      {% if label and href %}
+        <div class="mt-9">
+          {% include "components/button_primary.html" with href=href label=label %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>

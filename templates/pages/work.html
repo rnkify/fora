@@ -2,21 +2,151 @@
 
 {% block title %}Work — {{ fora.brand.name }}{% endblock %}
 
+{% block meta_description %}
+Selected Fora work, demonstration projects, and examples of AI systems, conversion work, and structured content systems.
+{% endblock %}
+
 {% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      Work
-    </p>
 
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      Selected systems, experiments, and demonstrations.
-    </h1>
+{% include "components/page_hero.html" with eyebrow="Work" title="Examples of how the system comes together." description="Fora uses demonstration work and future client case studies to show the thinking, structure, and evaluation behind each engagement." primary_label="Start a Project" primary_href=fora.primary_cta.href secondary_label="Explore Services" secondary_href="/services/" %}
 
-    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
-      Fora will publish clearly identified demonstration projects here until
-      genuine client work is available for publication.
-    </p>
+<section class="fora-section">
+  <div class="fora-container">
+
+    {% include "components/section_header.html" with eyebrow="Selected work" title="Built to show the process, not invent results." %}
+
+    <div class="fora-grid-2">
+
+      <article class="fora-card p-7 sm:p-9">
+        <span class="fora-badge">Demonstration</span>
+
+        <h2 class="fora-subheading mt-8">
+          Agency AI Content System
+        </h2>
+
+        <p class="fora-copy mt-4">
+          A demonstration system for turning a client brief into structured
+          research, positioning inputs, content directions, and reusable
+          production prompts.
+        </p>
+
+        <div class="mt-8 border-t border-fora-border pt-6">
+          <p class="text-sm font-semibold text-fora-text">
+            Focus
+          </p>
+
+          <p class="fora-copy mt-2">
+            Workflow design, prompt architecture, evaluation, and documentation.
+          </p>
+        </div>
+      </article>
+
+      <article class="fora-card p-7 sm:p-9">
+        <span class="fora-badge">Demonstration</span>
+
+        <h2 class="fora-subheading mt-8">
+          SaaS Landing Page System
+        </h2>
+
+        <p class="fora-copy mt-4">
+          A demonstration conversion system connecting audience research,
+          positioning, page structure, messaging variants, and evaluation
+          criteria.
+        </p>
+
+        <div class="mt-8 border-t border-fora-border pt-6">
+          <p class="text-sm font-semibold text-fora-text">
+            Focus
+          </p>
+
+          <p class="fora-copy mt-2">
+            Conversion copy, positioning, message testing, and reusable structure.
+          </p>
+        </div>
+      </article>
+
+      <article class="fora-card p-7 sm:p-9">
+        <span class="fora-badge">Demonstration</span>
+
+        <h2 class="fora-subheading mt-8">
+          Multi-Channel Content Engine
+        </h2>
+
+        <p class="fora-copy mt-4">
+          A structured approach for turning one strategic source into multiple
+          useful content assets while maintaining positioning and quality.
+        </p>
+
+        <div class="mt-8 border-t border-fora-border pt-6">
+          <p class="text-sm font-semibold text-fora-text">
+            Focus
+          </p>
+
+          <p class="fora-copy mt-2">
+            Content architecture, repurposing, quality control, and repeatability.
+          </p>
+        </div>
+      </article>
+
+      <article class="fora-card p-7 sm:p-9">
+        <span class="fora-badge">Framework</span>
+
+        <h2 class="fora-subheading mt-8">
+          AI Output Evaluation Framework
+        </h2>
+
+        <p class="fora-copy mt-4">
+          A reusable evaluation structure for comparing AI-generated outputs
+          against practical project criteria instead of relying on subjective
+          preference alone.
+        </p>
+
+        <div class="mt-8 border-t border-fora-border pt-6">
+          <p class="text-sm font-semibold text-fora-text">
+            Focus
+          </p>
+
+          <p class="fora-copy mt-2">
+            Evaluation criteria, consistency, commercial usefulness, and iteration.
+          </p>
+        </div>
+      </article>
+
+    </div>
   </div>
 </section>
+
+<section class="fora-section-tight border-y border-fora-border">
+  <div class="fora-container">
+    <div class="fora-content-grid">
+
+      <div>
+        <p class="fora-eyebrow">
+          Case-study policy
+        </p>
+
+        <h2 class="fora-heading">
+          Evidence should be real.
+        </h2>
+      </div>
+
+      <div class="fora-content-stack">
+        <p class="fora-copy-lg">
+          Fora does not present demonstration projects as client work or invent
+          performance results.
+        </p>
+
+        <p class="fora-copy">
+          As real projects are completed, this section can expand into proper
+          case studies showing the situation, objective, approach, deliverables,
+          and verified outcomes where clients permit publication.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% include "components/cta_panel.html" with eyebrow="Your project could be next" title="Start with a clear problem and a useful outcome." description="Tell Fora what needs to improve and we will define an appropriate first engagement." label="Start a Project" href=fora.primary_cta.href %}
+
 {% endblock %}

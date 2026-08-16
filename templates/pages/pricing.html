@@ -2,92 +2,58 @@
 
 {% block title %}Pricing — {{ fora.brand.name }}{% endblock %}
 
-{% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      Pricing
-    </p>
-
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      Start with a defined engagement.
-    </h1>
-
-    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
-      Choose the scope that best matches the problem. Pricing is kept
-      centralized so packages can evolve without changing application logic.
-    </p>
-  </div>
-
-  <div class="mt-14 grid gap-5 lg:grid-cols-2">
-    {% for plan in plans %}
-      <article class="rounded-3xl border border-fora-border p-7">
-        {% if plan.highlighted %}
-          <p class="mb-4 text-sm font-medium">Recommended</p>
-        {% endif %}
-
-        <h2 class="text-2xl font-semibold">{{ plan.name }}</h2>
-
-        <p class="mt-5 text-4xl font-semibold tracking-[-0.04em]">
-          ${{ plan.price }}
-        </p>
-
-        <p class="mt-2 text-sm text-fora-text-muted">
-          {{ plan.currency }} · per {{ plan.billing_period }}
-        </p>
-
-        <div class="mt-8">
-          {% include "components/button_primary.html" with href="/start/" label=plan.cta_label %}
-        </div>
-      </article>
-    {% endfor %}
-  </div>
-</section>
+{% block meta_description %}
+Fora project pricing for AI systems, conversion copy, content systems, and larger growth engagements.
 {% endblock %}
-HTMLcat > templates/pages/pricing.html <<'HTML'
-{% extends "layouts/base.html" %}
-
-{% block title %}Pricing — {{ fora.brand.name }}{% endblock %}
 
 {% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      Pricing
-    </p>
 
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      Start with a defined engagement.
-    </h1>
+{% include "components/page_hero.html" with eyebrow="Pricing" title="Start focused. Expand when it works." description="Most Fora relationships begin with a clearly scoped project. Larger engagements and retainers become useful after the initial work proves valuable." primary_label="Start a Project" primary_href=fora.primary_cta.href secondary_label="Explore Services" secondary_href="/services/" %}
 
-    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
-      Choose the scope that best matches the problem. Pricing is kept
-      centralized so packages can evolve without changing application logic.
-    </p>
-  </div>
-
-  <div class="mt-14 grid gap-5 lg:grid-cols-2">
-    {% for plan in plans %}
-      <article class="rounded-3xl border border-fora-border p-7">
-        {% if plan.highlighted %}
-          <p class="mb-4 text-sm font-medium">Recommended</p>
-        {% endif %}
-
-        <h2 class="text-2xl font-semibold">{{ plan.name }}</h2>
-
-        <p class="mt-5 text-4xl font-semibold tracking-[-0.04em]">
-          ${{ plan.price }}
-        </p>
-
-        <p class="mt-2 text-sm text-fora-text-muted">
-          {{ plan.currency }} · per {{ plan.billing_period }}
-        </p>
-
-        <div class="mt-8">
-          {% include "components/button_primary.html" with href="/start/" label=plan.cta_label %}
-        </div>
-      </article>
-    {% endfor %}
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="fora-grid-2">
+      {% for plan in plans %}
+        {% include "components/pricing_card.html" with plan=plan %}
+      {% endfor %}
+    </div>
   </div>
 </section>
+
+<section class="fora-section-tight border-y border-fora-border">
+  <div class="fora-container">
+    <div class="fora-content-grid">
+      <div>
+        <p class="fora-eyebrow">Pricing approach</p>
+        <h2 class="fora-heading">Clear scope before work begins.</h2>
+      </div>
+
+      <div class="fora-content-stack">
+        <article class="fora-stat">
+          <h3 class="fora-subheading">Defined deliverables</h3>
+          <p class="fora-copy mt-3">
+            Every project begins with an agreed scope, timeline, revision policy, and expected outcome.
+          </p>
+        </article>
+
+        <article class="fora-stat">
+          <h3 class="fora-subheading">No unnecessary complexity</h3>
+          <p class="fora-copy mt-3">
+            Fora recommends the smallest engagement that can solve the actual problem before proposing broader work.
+          </p>
+        </article>
+
+        <article class="fora-stat">
+          <h3 class="fora-subheading">Recurring work comes later</h3>
+          <p class="fora-copy mt-3">
+            Retainers are offered when ongoing optimization or fulfillment creates a clear advantage for the client.
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include "components/cta_panel.html" with eyebrow="Not sure which plan fits?" title="Describe the problem first." description="Fora can recommend the appropriate scope after understanding what you are trying to improve." label="Start a Project" href=fora.primary_cta.href %}
+
 {% endblock %}

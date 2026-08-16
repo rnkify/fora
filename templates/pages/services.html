@@ -2,55 +2,24 @@
 
 {% block title %}Services — {{ fora.brand.name }}{% endblock %}
 
+{% block meta_description %}
+Explore Fora's AI systems, conversion copy, content systems, and AI automation services.
+{% endblock %}
+
 {% block content %}
-<section class="fora-container py-20 sm:py-28">
-  <div class="max-w-3xl">
-    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
-      Services
-    </p>
 
-    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
-      Systems and communication built for practical growth.
-    </h1>
+{% include "components/page_hero.html" with eyebrow="Services" title="Focused systems for better execution." description="Fora combines AI workflow design, conversion-focused messaging, content systems, and practical automation strategy into engagements built around real business outcomes." primary_label="Start a Project" primary_href=fora.primary_cta.href secondary_label="View Pricing" secondary_href="/pricing/" %}
 
-    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
-      Fora combines AI systems, conversion copy, content operations,
-      and automation strategy into focused commercial engagements.
-    </p>
-  </div>
-
-  <div class="mt-14 grid gap-5 md:grid-cols-2">
-    {% for service in services %}
-      <article class="rounded-3xl border border-fora-border p-7">
-        <h2 class="text-2xl font-semibold tracking-[-0.03em]">
-          {{ service.name }}
-        </h2>
-
-        <p class="mt-4 leading-7 text-fora-text-muted">
-          {{ service.short_description }}
-        </p>
-
-        <div class="mt-7">
-          {% if service.id == "ai_systems" %}
-            <a href="{% url 'marketing:service_ai_systems' %}" class="font-medium">
-              Explore service →
-            </a>
-          {% elif service.id == "conversion_copy" %}
-            <a href="{% url 'marketing:service_conversion_copy' %}" class="font-medium">
-              Explore service →
-            </a>
-          {% elif service.id == "content_systems" %}
-            <a href="{% url 'marketing:service_content_systems' %}" class="font-medium">
-              Explore service →
-            </a>
-          {% elif service.id == "automation_consulting" %}
-            <a href="{% url 'marketing:service_automation' %}" class="font-medium">
-              Explore service →
-            </a>
-          {% endif %}
-        </div>
-      </article>
-    {% endfor %}
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="fora-grid-2">
+      {% for service in services %}
+        {% include "components/service_card.html" with service=service number=forloop.counter|stringformat:"02d" %}
+      {% endfor %}
+    </div>
   </div>
 </section>
+
+{% include "components/cta_panel.html" with eyebrow="Need a recommendation?" title="Start with the highest-value problem." description="Tell Fora what you are trying to improve. We will recommend the smallest useful engagement rather than expanding the scope unnecessarily." label="Start a Project" href=fora.primary_cta.href %}
+
 {% endblock %}
