@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -14,39 +16,55 @@
     name="description"
     content="{% block meta_description %}{{ fora.seo.default_description }}{% endblock %}"
   >
+
+  <link rel="stylesheet" href="{% static 'css/fora.css' %}">
 </head>
 
 <body>
-  <header>
-    <nav aria-label="Primary navigation">
-      <a href="/">
+  <header class="fora-header">
+    <div class="fora-container flex min-h-24 items-center justify-between gap-8">
+      <a
+        href="/"
+        class="text-xl font-semibold tracking-[-0.045em]"
+        aria-label="{{ fora.brand.name }} home"
+      >
         {{ fora.brand.name }}
       </a>
 
-      <ul>
+      <nav
+        class="hidden items-center gap-8 md:flex"
+        aria-label="Primary navigation"
+      >
         {% for item in fora.navigation %}
-          <li>
-            <a href="{{ item.href }}">
-              {{ item.label }}
-            </a>
-          </li>
+          <a
+            href="{{ item.href }}"
+            class="fora-nav-link"
+          >
+            {{ item.label }}
+          </a>
         {% endfor %}
-      </ul>
+      </nav>
 
-      <a href="{{ fora.primary_cta.href }}">
-        {{ fora.primary_cta.label }}
-      </a>
-    </nav>
+      {% include "components/button_primary.html" with href=fora.primary_cta.href label=fora.primary_cta.label %}
+    </div>
   </header>
 
   <main>
     {% block content %}{% endblock %}
   </main>
 
-  <footer>
-    <p>
-      {{ fora.brand.name }} — {{ fora.business.category }}
-    </p>
+  <footer class="border-t border-fora-border">
+    <div
+      class="fora-container flex flex-col gap-3 py-10 text-sm text-fora-text-muted sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>
+        {{ fora.brand.name }}
+      </p>
+
+      <p>
+        {{ fora.business.category }}
+      </p>
+    </div>
   </footer>
 </body>
 </html>

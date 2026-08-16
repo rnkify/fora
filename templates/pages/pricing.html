@@ -1,0 +1,93 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Pricing — {{ fora.brand.name }}{% endblock %}
+
+{% block content %}
+<section class="fora-container py-20 sm:py-28">
+  <div class="max-w-3xl">
+    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
+      Pricing
+    </p>
+
+    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
+      Start with a defined engagement.
+    </h1>
+
+    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
+      Choose the scope that best matches the problem. Pricing is kept
+      centralized so packages can evolve without changing application logic.
+    </p>
+  </div>
+
+  <div class="mt-14 grid gap-5 lg:grid-cols-2">
+    {% for plan in plans %}
+      <article class="rounded-3xl border border-fora-border p-7">
+        {% if plan.highlighted %}
+          <p class="mb-4 text-sm font-medium">Recommended</p>
+        {% endif %}
+
+        <h2 class="text-2xl font-semibold">{{ plan.name }}</h2>
+
+        <p class="mt-5 text-4xl font-semibold tracking-[-0.04em]">
+          ${{ plan.price }}
+        </p>
+
+        <p class="mt-2 text-sm text-fora-text-muted">
+          {{ plan.currency }} · per {{ plan.billing_period }}
+        </p>
+
+        <div class="mt-8">
+          {% include "components/button_primary.html" with href="/start/" label=plan.cta_label %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+HTMLcat > templates/pages/pricing.html <<'HTML'
+{% extends "layouts/base.html" %}
+
+{% block title %}Pricing — {{ fora.brand.name }}{% endblock %}
+
+{% block content %}
+<section class="fora-container py-20 sm:py-28">
+  <div class="max-w-3xl">
+    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
+      Pricing
+    </p>
+
+    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
+      Start with a defined engagement.
+    </h1>
+
+    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
+      Choose the scope that best matches the problem. Pricing is kept
+      centralized so packages can evolve without changing application logic.
+    </p>
+  </div>
+
+  <div class="mt-14 grid gap-5 lg:grid-cols-2">
+    {% for plan in plans %}
+      <article class="rounded-3xl border border-fora-border p-7">
+        {% if plan.highlighted %}
+          <p class="mb-4 text-sm font-medium">Recommended</p>
+        {% endif %}
+
+        <h2 class="text-2xl font-semibold">{{ plan.name }}</h2>
+
+        <p class="mt-5 text-4xl font-semibold tracking-[-0.04em]">
+          ${{ plan.price }}
+        </p>
+
+        <p class="mt-2 text-sm text-fora-text-muted">
+          {{ plan.currency }} · per {{ plan.billing_period }}
+        </p>
+
+        <div class="mt-8">
+          {% include "components/button_primary.html" with href="/start/" label=plan.cta_label %}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

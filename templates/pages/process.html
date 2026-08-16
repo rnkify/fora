@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Process — {{ fora.brand.name }}{% endblock %}
+
+{% block content %}
+<section class="fora-container py-20 sm:py-28">
+  <div class="max-w-3xl">
+    <p class="mb-4 text-sm font-medium uppercase tracking-[0.16em] text-fora-text-muted">
+      Process
+    </p>
+
+    <h1 class="text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
+      Structured from problem to delivery.
+    </h1>
+
+    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
+      {{ process.intro }}
+    </p>
+  </div>
+
+  <div class="mt-14 grid gap-5 md:grid-cols-2">
+    {% for step in home.process_steps %}
+      <article class="rounded-3xl border border-fora-border p-7">
+        <p class="text-sm text-fora-text-muted">{{ step.number }}</p>
+        <h2 class="mt-4 text-2xl font-semibold">{{ step.title }}</h2>
+        <p class="mt-4 leading-7 text-fora-text-muted">
+          {{ step.description }}
+        </p>
+      </article>
+    {% endfor %}
+  </div>
+
+  <p class="mt-12 max-w-3xl leading-7 text-fora-text-muted">
+    {{ process.principle }}
+  </p>
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{
+  "name": "fora-frontend",
+  "private": true,
+  "scripts": {
+    "css:build": "npx @tailwindcss/cli -i ./static/css/input.css -o ./static/css/fora.css --minify",
+    "css:watch": "npx @tailwindcss/cli -i ./static/css/input.css -o ./static/css/fora.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "tailwindcss": "^4.0.0"
+  }
+}

@@ -1,0 +1,373 @@
+@import "tailwindcss";
+
+@import "../../design/tokens.css";
+
+@source "../../templates";
+@source "../../apps";
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--color-fora-bg);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(
+        circle at 50% -10%,
+        rgba(125, 140, 255, 0.10),
+        transparent 36rem
+      ),
+      var(--color-fora-bg);
+    color: var(--color-fora-text);
+    font-family: var(--font-sans);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  ::selection {
+    background: rgba(220, 226, 255, 0.22);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-fora-primary);
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .fora-container {
+    width: min(
+      calc(100% - (var(--spacing-fora-gutter) * 2)),
+      1200px
+    );
+    margin-inline: auto;
+  }
+
+  .fora-section {
+    padding-block: var(--spacing-fora-section);
+  }
+
+  .fora-section-tight {
+    padding-block: clamp(3.5rem, 6vw, 6rem);
+  }
+
+  .fora-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 1.25rem;
+    color: var(--color-fora-text-muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .fora-eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: var(--color-fora-border-strong);
+  }
+
+  .fora-display {
+    max-width: 13ch;
+    margin: 0;
+    font-size: var(--text-fora-display);
+    font-weight: 650;
+    letter-spacing: -0.06em;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .fora-heading {
+    margin: 0;
+    font-size: var(--text-fora-h2);
+    font-weight: 650;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    text-wrap: balance;
+  }
+
+  .fora-subheading {
+    margin: 0;
+    font-size: var(--text-fora-h3);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+  }
+
+  .fora-copy {
+    color: var(--color-fora-text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
+    line-height: 1.7;
+  }
+
+  .fora-copy-lg {
+    color: var(--color-fora-text-muted);
+    font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+    line-height: 1.65;
+  }
+
+  .fora-button {
+    display: inline-flex;
+    min-height: 3.15rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-fora-sm);
+    padding: 0.88rem 1.25rem;
+    font-size: 0.94rem;
+    font-weight: 650;
+    transition:
+      transform 180ms var(--ease-fora),
+      border-color 180ms ease,
+      background-color 180ms ease,
+      color 180ms ease;
+  }
+
+  .fora-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .fora-button-primary {
+    background: var(--color-fora-primary-strong);
+    color: #08090c;
+  }
+
+  .fora-button-primary:hover {
+    background: var(--color-fora-primary);
+  }
+
+  .fora-button-secondary {
+    border-color: var(--color-fora-border);
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--color-fora-text);
+  }
+
+  .fora-button-secondary:hover {
+    border-color: var(--color-fora-border-strong);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .fora-card {
+    border: 1px solid var(--color-fora-border);
+    border-radius: var(--radius-fora-lg);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.045),
+        rgba(255, 255, 255, 0.018)
+      ),
+      var(--color-fora-surface);
+    box-shadow: var(--shadow-fora-card);
+  }
+
+  .fora-card-interactive {
+    transition:
+      transform 220ms var(--ease-fora),
+      border-color 220ms ease,
+      background-color 220ms ease;
+  }
+
+  .fora-card-interactive:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-fora-border-strong);
+  }
+
+  .fora-grid-2 {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fora-grid-3 {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .fora-grid-4 {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .fora-section-header {
+    display: grid;
+    gap: 1.25rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .fora-section-header p {
+    max-width: 42rem;
+  }
+
+  .fora-divider {
+    height: 1px;
+    border: 0;
+    background: var(--color-fora-border);
+  }
+
+  .fora-badge {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-fora-border);
+    border-radius: 999px;
+    padding: 0.42rem 0.7rem;
+    color: var(--color-fora-text-muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+    letter-spacing: 0.03em;
+  }
+
+  @media (max-width: 900px) {
+    .fora-grid-4,
+    .fora-grid-3 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .fora-grid-4,
+    .fora-grid-3,
+    .fora-grid-2 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .fora-display {
+      max-width: none;
+    }
+  }
+}
+
+@layer components {
+  .fora-hero {
+    position: relative;
+    min-height: min(780px, calc(100vh - 5rem));
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .fora-hero::after {
+    content: "";
+    position: absolute;
+    top: 14%;
+    right: -12rem;
+    width: 38rem;
+    height: 38rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background:
+      radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.035),
+        transparent 68%
+      );
+    pointer-events: none;
+  }
+
+  .fora-hero-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .fora-hero-copy {
+    max-width: 47rem;
+  }
+
+  .fora-header {
+    position: relative;
+    z-index: 50;
+    border-bottom: 1px solid var(--color-fora-border);
+    background: rgba(8, 9, 12, 0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .fora-nav-link {
+    position: relative;
+    padding-block: 0.5rem;
+    color: var(--color-fora-text-muted);
+    font-size: 0.9rem;
+    transition: color 180ms ease;
+  }
+
+  .fora-nav-link:hover {
+    color: var(--color-fora-text);
+  }
+
+  .fora-nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.15rem;
+    height: 1px;
+    background: var(--color-fora-text);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 220ms var(--ease-fora);
+  }
+
+  .fora-nav-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  @media (max-width: 900px) {
+    .fora-hero {
+      min-height: auto;
+      padding-block: 6rem;
+    }
+
+    .fora-hero::after {
+      opacity: 0.55;
+      right: -22rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .fora-hero {
+      padding-block: 4.5rem;
+    }
+
+    .fora-hero::after {
+      display: none;
+    }
+  }
+}

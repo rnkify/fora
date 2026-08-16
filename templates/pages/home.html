@@ -1,108 +1,204 @@
 {% extends "layouts/base.html" %}
 
 {% block title %}
-  {{ fora.brand.name }} — {{ fora.brand.tagline }}
+{{ fora.brand.name }} — {{ fora.brand.tagline }}
 {% endblock %}
 
 {% block content %}
 
-<section>
-  <p>{{ home.hero.eyebrow }}</p>
-
-  <h1>
-    {{ home.hero.headline }}
-  </h1>
-
-  <p>
-    {{ home.hero.description }}
-  </p>
-
-  <p>
-    <a href="{{ fora.primary_cta.href }}">
-      {{ home.hero.primary_cta }}
-    </a>
-
-    <a href="/work/">
-      {{ home.hero.secondary_cta }}
-    </a>
-  </p>
-</section>
-
-<section>
-  <h2>What Fora helps with</h2>
-
-  {% for service in services %}
-    <article>
-      <h3>{{ service.name }}</h3>
-      <p>{{ service.short_description }}</p>
-    </article>
-  {% endfor %}
-</section>
-
-<section>
-  <h2>Why Fora</h2>
-
-  {% for benefit in home.benefits %}
-    <article>
-      <h3>{{ benefit.title }}</h3>
-      <p>{{ benefit.description }}</p>
-    </article>
-  {% endfor %}
-</section>
-
-<section>
-  <h2>How we work</h2>
-
-  {% for step in home.process_steps %}
-    <article>
-      <p>{{ step.number }}</p>
-      <h3>{{ step.title }}</h3>
-      <p>{{ step.description }}</p>
-    </article>
-  {% endfor %}
-</section>
-
-<section>
-  <h2>Plans</h2>
-
-  {% for plan in plans %}
-    <article>
-      <h3>{{ plan.name }}</h3>
-
-      <p>
-        {{ plan.currency }} {{ plan.price }}
+<section class="fora-hero">
+  <div class="fora-container fora-hero-inner">
+    <div class="max-w-5xl animate-fora-enter">
+      <p class="fora-eyebrow">
+        {{ home.hero.eyebrow }}
       </p>
 
-      <p>
-        {{ plan.cta_label }}
+      <h1 class="fora-display">
+        {{ home.hero.headline }}
+      </h1>
+
+      <p class="fora-copy-lg fora-hero-copy mt-8">
+        {{ home.hero.description }}
       </p>
-    </article>
-  {% endfor %}
+
+      <div class="mt-9 flex flex-wrap gap-3">
+        {% include "components/button_primary.html" with href=fora.primary_cta.href label=home.hero.primary_cta %}
+
+        {% include "components/button_secondary.html" with href="/work/" label=home.hero.secondary_cta %}
+      </div>
+    </div>
+  </div>
 </section>
 
-<section>
-  <h2>Frequently asked questions</h2>
 
-  {% for item in faqs %}
-    <article>
-      <h3>{{ item.question }}</h3>
-      <p>{{ item.answer }}</p>
-    </article>
-  {% endfor %}
+<section class="fora-section-tight border-y border-fora-border">
+  <div class="fora-container">
+
+    {% include "components/section_header.html" with eyebrow="Capabilities" title="What Fora helps with" description="Focused systems and execution for teams that want more reliable AI and stronger commercial communication." %}
+
+    <div class="fora-grid-4">
+      {% for service in services %}
+        <article class="fora-card fora-card-interactive p-7">
+          <div class="mb-10">
+            <span class="fora-badge">
+              0{{ forloop.counter }}
+            </span>
+          </div>
+
+          <h3 class="fora-subheading">
+            {{ service.name }}
+          </h3>
+
+          <p class="fora-copy mt-4">
+            {{ service.short_description }}
+          </p>
+        </article>
+      {% endfor %}
+    </div>
+
+  </div>
 </section>
 
-<section>
-  <h2>
-    {{ home.final_cta_headline }}
-  </h2>
 
-  <p>
-    {{ home.final_cta_description }}
-  </p>
+<section class="fora-section">
+  <div class="fora-container">
 
-  <a href="{{ fora.primary_cta.href }}">
-    {{ home.final_cta_label }}
-  </a>
+    {% include "components/section_header.html" with eyebrow="Why Fora" title="Built for repeatable improvement" description="Fora combines systems thinking, commercial focus, and structured evaluation rather than treating AI output as finished work." %}
+
+    <div class="fora-grid-3">
+      {% for benefit in home.benefits %}
+        <article class="border-t border-fora-border pt-7">
+          <h3 class="fora-subheading">
+            {{ benefit.title }}
+          </h3>
+
+          <p class="fora-copy mt-4">
+            {{ benefit.description }}
+          </p>
+        </article>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<section class="fora-section bg-fora-surface">
+  <div class="fora-container">
+
+    {% include "components/section_header.html" with eyebrow="Process" title="A clear path from problem to usable system" description="Every engagement follows the same core sequence so work stays focused, reviewable, and useful after delivery." %}
+
+    <div class="fora-grid-4">
+      {% for step in home.process_steps %}
+        <article>
+          <p class="mb-8 text-sm font-semibold text-fora-text-subtle">
+            {{ step.number }}
+          </p>
+
+          <h3 class="fora-subheading">
+            {{ step.title }}
+          </h3>
+
+          <p class="fora-copy mt-4">
+            {{ step.description }}
+          </p>
+        </article>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<section class="fora-section">
+  <div class="fora-container">
+
+    {% include "components/section_header.html" with eyebrow="Engagements" title="Start focused. Scale when it works." description="Begin with a defined project, then expand into ongoing optimization or agency fulfillment when the relationship proves valuable." %}
+
+    <div class="fora-grid-4">
+      {% for plan in plans %}
+        <article
+          class="
+            fora-card p-7
+            {% if plan.highlighted %}
+              border-fora-border-strong bg-fora-surface-raised
+            {% endif %}
+          "
+        >
+          {% if plan.highlighted %}
+            <span class="fora-badge">
+              Recommended
+            </span>
+          {% endif %}
+
+          <h3 class="fora-subheading mt-6">
+            {{ plan.name }}
+          </h3>
+
+          <p class="mt-8 text-4xl font-semibold tracking-[-0.05em]">
+            ${{ plan.price }}
+          </p>
+
+          <p class="mt-2 text-sm text-fora-text-muted">
+            {{ plan.billing_period }}
+          </p>
+
+          <div class="mt-8">
+            {% include "components/button_secondary.html" with href=fora.primary_cta.href label=plan.cta_label %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<section class="fora-section border-y border-fora-border">
+  <div class="fora-container">
+
+    {% include "components/section_header.html" with eyebrow="FAQ" title="Common questions" %}
+
+    <div class="mx-auto max-w-4xl">
+      {% for item in faqs %}
+        <details class="group border-t border-fora-border py-6">
+          <summary
+            class="cursor-pointer list-none text-lg font-medium tracking-[-0.02em]"
+          >
+            {{ item.question }}
+          </summary>
+
+          <p class="fora-copy mt-4 max-w-3xl">
+            {{ item.answer }}
+          </p>
+        </details>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+
+<section class="fora-section">
+  <div class="fora-container">
+    <div class="fora-card overflow-hidden px-7 py-16 sm:px-12 lg:px-16">
+      <p class="fora-eyebrow">
+        Start with the highest-value problem
+      </p>
+
+      <h2 class="fora-heading max-w-4xl">
+        {{ home.final_cta_headline }}
+      </h2>
+
+      <p class="fora-copy-lg mt-6 max-w-2xl">
+        {{ home.final_cta_description }}
+      </p>
+
+      <div class="mt-9">
+        {% include "components/button_primary.html" with href=fora.primary_cta.href label=home.final_cta_label %}
+      </div>
+    </div>
+  </div>
 </section>
 
 {% endblock %}

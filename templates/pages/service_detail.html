@@ -1,0 +1,57 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ service.name }} — {{ fora.brand.name }}{% endblock %}
+
+{% block content %}
+<section class="fora-container py-20 sm:py-28">
+  <div class="max-w-3xl">
+    <a
+      href="{% url 'marketing:services' %}"
+      class="text-sm text-fora-text-muted transition-colors hover:text-fora-text"
+    >
+      ← All services
+    </a>
+
+    <h1 class="mt-8 text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
+      {{ service.name }}
+    </h1>
+
+    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
+      {{ service.short_description }}
+    </p>
+
+    <div class="mt-10">
+      {% include "components/button_primary.html" with href="/start/" label="Start a Project" %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+HTMLcat > templates/pages/service_detail.html <<'HTML'
+{% extends "layouts/base.html" %}
+
+{% block title %}{{ service.name }} — {{ fora.brand.name }}{% endblock %}
+
+{% block content %}
+<section class="fora-container py-20 sm:py-28">
+  <div class="max-w-3xl">
+    <a
+      href="{% url 'marketing:services' %}"
+      class="text-sm text-fora-text-muted transition-colors hover:text-fora-text"
+    >
+      ← All services
+    </a>
+
+    <h1 class="mt-8 text-4xl font-semibold tracking-[-0.04em] sm:text-6xl">
+      {{ service.name }}
+    </h1>
+
+    <p class="mt-6 text-lg leading-8 text-fora-text-muted">
+      {{ service.short_description }}
+    </p>
+
+    <div class="mt-10">
+      {% include "components/button_primary.html" with href="/start/" label="Start a Project" %}
+    </div>
+  </div>
+</section>
+{% endblock %}
