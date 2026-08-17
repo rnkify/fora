@@ -1,21 +1,15 @@
 <article
   class="
-    fora-card flex h-full flex-col p-7
+    fora-card fora-pricing-card
     {% if plan.highlighted %}
-      border-fora-border-strong bg-fora-surface-raised
+      fora-pricing-card-recommended
     {% endif %}
   "
 >
-  <div class="flex items-start justify-between gap-4">
-    <div>
-      <h3 class="fora-subheading">
-        {{ plan.name }}
-      </h3>
-
-      <p class="fora-copy mt-3">
-        {{ plan.description }}
-      </p>
-    </div>
+  <div class="fora-pricing-card-heading">
+    <h3 class="fora-subheading">
+      {{ plan.name }}
+    </h3>
 
     {% if plan.highlighted %}
       <span class="fora-badge">
@@ -24,8 +18,12 @@
     {% endif %}
   </div>
 
-  <div class="mt-8">
-    <span class="text-4xl font-semibold tracking-[-0.05em]">
+  <p class="fora-copy fora-pricing-card-description">
+    {{ plan.description }}
+  </p>
+
+  <div class="fora-pricing-card-price">
+    <span class="fora-pricing-card-amount">
       ${{ plan.price }}
     </span>
 
@@ -38,14 +36,14 @@
     {{ plan.billing_period }}
   </p>
 
-  <ul class="mt-8 grid gap-3 text-sm text-fora-text-muted">
+  <ul class="fora-pricing-card-features">
     {% for item in plan.deliverables %}
       <li class="flex gap-3">
         <span aria-hidden="true" class="text-fora-text">
           ✓
         </span>
 
-        <span>
+        <span class="min-w-0">
           {{ item }}
         </span>
       </li>
@@ -53,6 +51,6 @@
   </ul>
 
   <div class="mt-auto pt-9">
-    {% include "components/button_secondary.html" with href=fora.primary_cta.href label=plan.cta_label %}
+    <a class="fora-button fora-button-secondary w-full" href="{% url 'marketing:start_project' %}?plan={{ plan.id|urlencode }}">{{ plan.cta_label }}</a>
   </div>
 </article>

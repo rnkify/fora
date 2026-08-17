@@ -25,7 +25,10 @@ def _find_or_create_company(inquiry):
 
 
 def _find_or_create_contact(*, inquiry, company):
-    contact = Contact.objects.filter(email__iexact=inquiry.email).first()
+    contact = Contact.objects.filter(
+        email__iexact=inquiry.email,
+        company=company,
+    ).first()
 
     if contact:
         return contact

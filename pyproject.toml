@@ -12,6 +12,7 @@ dependencies = [
     "psycopg[binary]>=3.3,<4",
     "dj-database-url>=3,<4",
     "python-dotenv>=1.1,<2",
+    "whitenoise>=6,<7",
     "gunicorn>=23,<24",
     "uvicorn>=0.35,<1",
 ]
@@ -25,7 +26,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "config.settings.development"
+DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = [
     "test_*.py",
     "*_test.py",

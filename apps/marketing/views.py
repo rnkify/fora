@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.urls import reverse
 
 from apps.analytics.models import AnalyticsEvent
 from apps.analytics.services import record_request_event
@@ -79,6 +80,9 @@ def _service_page(request, service_id):
         "pages/service_detail.html",
         {
             "service": service,
+            "service_start_href": (
+                f"{reverse('marketing:start_project')}?service={service.id}"
+            ),
         },
     )
 
@@ -176,7 +180,7 @@ def contact(request):
                 },
             )
 
-            return redirect("/contact/?submitted=1")
+            return redirect(f"{reverse('marketing:contact')}?submitted=1")
     else:
         form = ContactForm()
 
@@ -219,9 +223,14 @@ def start_project(request):
                 },
             )
 
-            return redirect("/start/?submitted=1")
+            return redirect(f"{reverse('marketing:start_project')}?submitted=1")
     else:
-        form = ProjectInquiryForm()
+        form = ProjectInquiryForm(
+            initial={
+                "service_interest_id": request.GET.get("service", ""),
+                "plan_interest_id": request.GET.get("plan", ""),
+            }
+        )
 
     return render(
         request,
@@ -233,3 +242,11 @@ def start_project(request):
             "plans": get_enabled_plans(),
         },
     )
+
+
+def privacy(request):
+    return render(request, "pages/privacy.html")
+
+
+def terms(request):
+    return render(request, "pages/terms.html")

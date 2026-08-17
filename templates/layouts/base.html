@@ -16,6 +16,18 @@
     name="description"
     content="{% block meta_description %}{{ fora.seo.default_description }}{% endblock %}"
   >
+  <meta name="robots" content="{% block meta_robots %}{% if fora.seo.robots_index %}index,follow{% else %}noindex,nofollow{% endif %}{% endblock %}">
+  <meta property="og:site_name" content="{{ fora.brand.name }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ social_title }}">
+  <meta property="og:description" content="{{ social_description }}">
+  <meta property="og:url" content="{{ app_url }}{{ request.path }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="{{ social_title }}">
+  <meta name="twitter:description" content="{{ social_description }}">
+  <link rel="canonical" href="{{ app_url }}{{ request.path }}">
+  <link rel="icon" href="{% static 'icons/favicon.svg' %}" type="image/svg+xml">
+  <link rel="mask-icon" href="{% static 'brand/fora-symbol.svg' %}" color="#08090c">
 
   <link rel="stylesheet" href="{% static 'css/fora.css' %}">
 </head>
@@ -25,10 +37,10 @@
     <div class="fora-container flex min-h-24 items-center justify-between gap-8">
       <a
         href="/"
-        class="text-xl font-semibold tracking-[-0.045em]"
+        class="fora-logo"
         aria-label="{{ fora.brand.name }} home"
       >
-        {{ fora.brand.name }}
+        <img src="{% static 'brand/fora-logo-light.svg' %}" alt="{{ fora.brand.name }}" width="112" height="32">
       </a>
 
       <nav
@@ -82,6 +94,11 @@
   </header>
 
   <main>
+    {% if messages %}
+      <div class="fora-container pt-6" aria-live="polite">
+        {% for message in messages %}<p class="fora-card mb-3 px-5 py-4 text-sm">{{ message }}</p>{% endfor %}
+      </div>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
 
@@ -89,13 +106,15 @@
     <div
       class="fora-container flex flex-col gap-3 py-10 text-sm text-fora-text-muted sm:flex-row sm:items-center sm:justify-between"
     >
-      <p>
-        {{ fora.brand.name }}
-      </p>
+      <a href="/" class="fora-logo fora-logo-footer" aria-label="{{ fora.brand.name }} home">
+        <img src="{% static 'brand/fora-logo-light.svg' %}" alt="{{ fora.brand.name }}" width="98" height="28">
+      </a>
 
-      <p>
-        {{ fora.business.category }}
-      </p>
+      <nav class="flex flex-wrap gap-5" aria-label="Legal">
+        <a href="{% url 'marketing:privacy' %}" class="hover:text-fora-text">Privacy</a>
+        <a href="{% url 'marketing:terms' %}" class="hover:text-fora-text">Terms</a>
+      </nav>
+      <p>{{ fora.business.category }}</p>
     </div>
   </footer>
   <script src="{% static 'js/site.js' %}" defer></script>

@@ -40,4 +40,31 @@ Core principles:
 
 ## Local development
 
-The complete development instructions will be added as the foundation is implemented.
+Create and activate a Python 3.14 virtual environment, install the project with
+development dependencies, copy `.env.example` to `.env`, and configure a local
+PostgreSQL database. Then run:
+
+```shell
+python manage.py migrate
+npm install
+npm run css:build
+python manage.py runserver
+```
+
+The test suite uses an isolated SQLite database and does not connect to the
+development or production database:
+
+```shell
+pytest
+```
+
+## Production
+
+The Docker image collects static assets and starts Gunicorn with Django's ASGI
+application. The startup script applies pending migrations before serving traffic.
+Railway must provide `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_HOSTS`, `APP_URL`, and
+the relevant email settings from `.env.example`. Set `CSRF_TRUSTED_ORIGINS` to the
+public HTTPS origin and `INQUIRY_NOTIFICATION_EMAIL` to the internal recipient.
+
+`/health/` is the process liveness endpoint. `/ready/` verifies the database
+connection and should be used where a readiness check is supported.

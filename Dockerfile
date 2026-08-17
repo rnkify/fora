@@ -28,6 +28,8 @@ COPY scripts ./scripts
 
 RUN SECRET_KEY=build-only-secret \
     ALLOWED_HOSTS=localhost \
+    APP_URL=https://localhost \
+    CSRF_TRUSTED_ORIGINS=https://localhost \
     DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder \
     python manage.py collectstatic \
     --noinput \

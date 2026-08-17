@@ -36,12 +36,18 @@ media/
 # ------------------------------------------------------------
 # Testing / tooling
 # ------------------------------------------------------------
+node_modules/
 .pytest_cache/
 .coverage
 .coverage.*
 htmlcov/
 .ruff_cache/
 .mypy_cache/
+.test.sqlite3*
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
 
 # ------------------------------------------------------------
 # IDE / editor

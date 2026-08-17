@@ -6,6 +6,7 @@ app_name = "operations"
 
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
+    path("projects/", views.project_list, name="project_list"),
     path(
         "leads/<int:lead_id>/start-project/",
         views.start_project,

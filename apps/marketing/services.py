@@ -5,10 +5,10 @@ from apps.marketing.notifications import notify_new_inquiry
 
 def _request_metadata(request):
     return {
-        "utm_source": request.GET.get("utm_source", "")[:200],
-        "utm_medium": request.GET.get("utm_medium", "")[:200],
-        "utm_campaign": request.GET.get("utm_campaign", "")[:200],
-        "referrer": request.headers.get("Referer", "")[:1000],
+        "utm_source": request.GET.get("utm_source", "")[:120],
+        "utm_medium": request.GET.get("utm_medium", "")[:120],
+        "utm_campaign": request.GET.get("utm_campaign", "")[:120],
+        "referrer": request.headers.get("Referer", "")[:200],
         "landing_page": request.path[:500],
     }
 

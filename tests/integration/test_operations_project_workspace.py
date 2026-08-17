@@ -102,6 +102,56 @@ def test_staff_can_update_project(client):
 
 
 @pytest.mark.django_db
+def test_project_rejects_due_date_before_start_date(client):
+    user = make_staff()
+    project = make_project()
+    client.force_login(user)
+
+    response = client.post(
+        reverse("operations:update_project", args=[project.pk]),
+        {
+            "status": Project.Status.RESEARCH,
+            "started_at": "2026-08-30",
+            "due_at": "2026-08-20",
+            "delivered_at": "",
+            "revision_count": 0,
+            "notes": "",
+        },
+    )
+
+    project.refresh_from_db()
+    assert response.status_code == 200
+    assert b"Due date cannot be before the start date." in response.content
+    assert project.started_at is None
+    assert project.due_at is None
+
+
+@pytest.mark.django_db
+def test_reopening_delivered_project_clears_delivery_date(client):
+    user = make_staff()
+    project = make_project()
+    project.status = Project.Status.DELIVERED
+    project.delivered_at = "2026-08-16"
+    project.save()
+    client.force_login(user)
+
+    client.post(
+        reverse("operations:update_project", args=[project.pk]),
+        {
+            "status": Project.Status.REVISION,
+            "started_at": "",
+            "due_at": "",
+            "delivered_at": "2026-08-16",
+            "revision_count": 1,
+            "notes": "Reopened.",
+        },
+    )
+
+    project.refresh_from_db()
+    assert project.delivered_at is None
+
+
+@pytest.mark.django_db
 def test_staff_can_add_project_task(client):
     user = make_staff()
     project = make_project()

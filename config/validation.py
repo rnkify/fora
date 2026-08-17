@@ -24,6 +24,11 @@ def validate_configuration() -> None:
                 f"Service {service.id!r} has no public name."
             )
 
+        if not service.path.startswith("/services/"):
+            raise RuntimeError(
+                f"Service {service.id!r} must define a public service path."
+            )
+
     for key, plan in PLANS.items():
         if key != plan.id:
             raise RuntimeError(

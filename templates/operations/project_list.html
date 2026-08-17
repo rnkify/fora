@@ -1,0 +1,27 @@
+{% extends "layouts/base.html" %}
+{% block title %}Projects — Fora Operations{% endblock %}
+{% block meta_robots %}noindex,nofollow{% endblock %}
+{% block content %}
+<section class="fora-section-tight border-b border-fora-border"><div class="fora-container">
+  <div class="flex flex-wrap items-end justify-between gap-6"><div><p class="fora-eyebrow">Operations</p><h1 class="fora-heading">Projects</h1><p class="fora-copy-lg mt-5">Find active work, delivered engagements, and archived records.</p></div><a href="{% url 'operations:dashboard' %}" class="fora-button fora-button-secondary">Dashboard</a></div>
+</div></section>
+<section class="fora-section-tight"><div class="fora-container">
+  <form method="get" class="fora-card mb-8 grid gap-4 p-5 md:grid-cols-[1fr_auto_auto] md:items-end">
+    <div><label for="project-search" class="mb-2 block text-sm font-semibold">Search</label><input id="project-search" name="q" value="{{ query }}" type="search" placeholder="Client, service, engagement, or scope" class="w-full rounded-fora-sm border border-fora-border bg-fora-surface px-4 py-3 text-fora-text outline-none focus:border-fora-border-strong"></div>
+    <div><label for="project-status" class="mb-2 block text-sm font-semibold">Status</label><select id="project-status" name="status" class="rounded-fora-sm border border-fora-border bg-fora-surface px-4 py-3 text-fora-text"><option value="">Any status</option>{% for value, label in status_choices %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <input type="hidden" name="state" value="{{ selected_state }}"><button type="submit" class="fora-button fora-button-primary">Filter projects</button>
+  </form>
+  <nav class="mb-8 flex flex-wrap gap-2" aria-label="Project states">
+    <a href="?state=active{% if query %}&q={{ query|urlencode }}{% endif %}" class="fora-button {% if selected_state == 'active' and not selected_status %}fora-button-primary{% else %}fora-button-secondary{% endif %}">Active</a>
+    <a href="?state=delivered{% if query %}&q={{ query|urlencode }}{% endif %}" class="fora-button {% if selected_state == 'delivered' and not selected_status %}fora-button-primary{% else %}fora-button-secondary{% endif %}">Delivered</a>
+    <a href="?state=archived{% if query %}&q={{ query|urlencode }}{% endif %}" class="fora-button {% if selected_state == 'archived' and not selected_status %}fora-button-primary{% else %}fora-button-secondary{% endif %}">Archived</a>
+    <a href="?state=all{% if query %}&q={{ query|urlencode }}{% endif %}" class="fora-button {% if selected_state == 'all' and not selected_status %}fora-button-primary{% else %}fora-button-secondary{% endif %}">All</a>
+  </nav>
+  {% if page.object_list %}
+    <div class="fora-card fora-ops-table-card"><div class="fora-ops-table-scroll"><table class="w-full min-w-[780px] border-collapse text-left"><thead class="border-b border-fora-border text-xs uppercase tracking-wider text-fora-text-muted"><tr><th class="p-5">Client / project</th><th class="p-5">Service</th><th class="p-5">Status</th><th class="p-5">Due</th><th class="p-5" aria-label="Open project"></th></tr></thead><tbody>
+    {% for project in page.object_list %}<tr class="border-b border-fora-border last:border-0"><td class="p-5"><strong>{{ project.client.company.name }}</strong><div class="mt-1 text-sm text-fora-text-muted">Project #{{ project.id }}</div></td><td class="p-5">{{ project.service_name_snapshot }}{% if project.plan_name_snapshot %}<div class="mt-1 text-sm text-fora-text-muted">{{ project.plan_name_snapshot }}</div>{% endif %}</td><td class="p-5"><span class="fora-ops-tag">{{ project.get_status_display }}</span></td><td class="p-5 {% if project.due_at and project.due_at < today and project.status != 'delivered' and project.status != 'archived' %}text-fora-danger{% endif %}">{{ project.due_at|default:"Not set" }}</td><td class="p-5 text-right"><a class="fora-ops-row-link" href="{% url 'operations:project_detail' project.id %}">Workspace →</a></td></tr>{% endfor %}
+    </tbody></table></div></div>
+    {% if page.has_other_pages %}<nav class="mt-8 flex items-center justify-between text-sm" aria-label="Project pages">{% if page.has_previous %}<a class="fora-ops-row-link" href="?q={{ query|urlencode }}&state={{ selected_state }}&status={{ selected_status }}&page={{ page.previous_page_number }}">← Previous</a>{% else %}<span></span>{% endif %}<span class="text-fora-text-muted">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>{% if page.has_next %}<a class="fora-ops-row-link" href="?q={{ query|urlencode }}&state={{ selected_state }}&status={{ selected_status }}&page={{ page.next_page_number }}">Next →</a>{% endif %}</nav>{% endif %}
+  {% else %}<div class="fora-card p-10 text-center"><h2 class="fora-subheading">No projects found</h2><p class="fora-copy mt-3">Try another search or state. Won leads can be started from the operations dashboard.</p></div>{% endif %}
+</div></section>
+{% endblock %}

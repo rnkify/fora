@@ -33,6 +33,16 @@ class ProjectDeliveryForm(forms.ModelForm):
         for field in self.fields.values():
             field.widget.attrs["class"] = INPUT_CLASS
 
+    def clean(self):
+        cleaned_data = super().clean()
+        started_at = cleaned_data.get("started_at")
+        due_at = cleaned_data.get("due_at")
+
+        if started_at and due_at and due_at < started_at:
+            self.add_error("due_at", "Due date cannot be before the start date.")
+
+        return cleaned_data
+
 
 class ProjectTaskForm(forms.ModelForm):
     class Meta:

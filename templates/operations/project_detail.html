@@ -1,16 +1,17 @@
 {% extends "layouts/base.html" %}
 
 {% block title %}{{ project.client.company.name }} — Operations{% endblock %}
+{% block meta_robots %}noindex,nofollow{% endblock %}
 
 {% block content %}
 
 <section class="fora-section-tight border-b border-fora-border">
   <div class="fora-container">
     <a
-      href="{% url 'operations:dashboard' %}"
+      href="{% url 'operations:project_list' %}"
       class="text-sm font-semibold text-fora-text-muted hover:text-fora-text"
     >
-      ← Operations
+      ← Projects
     </a>
 
     <div class="mt-10 flex flex-wrap items-end justify-between gap-8">
@@ -275,6 +276,12 @@
                 </label>
 
                 {{ field }}
+
+                {% if field.errors %}
+                  <p class="mt-2 text-sm text-fora-danger">
+                    {{ field.errors|striptags }}
+                  </p>
+                {% endif %}
               </div>
             {% endfor %}
 

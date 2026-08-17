@@ -3,7 +3,8 @@ from datetime import timedelta
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ValidationError
-from django.db.models import Count, Sum
+from django.core.paginator import Paginator
+from django.db.models import Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -19,6 +20,57 @@ from apps.operations.forms import (
 )
 from apps.operations.services import start_project_from_won_lead
 from apps.projects.models import Project, ProjectTask
+
+ACTIVE_PROJECT_STATUSES = tuple(
+    value
+    for value, _label in Project.Status.choices
+    if value not in {Project.Status.DELIVERED, Project.Status.ARCHIVED}
+)
+
+
+@staff_member_required
+def project_list(request):
+    projects = Project.objects.select_related("client", "client__company")
+    query = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+    state = request.GET.get("state", "active").strip()
+
+    if query:
+        projects = projects.filter(
+            Q(client__company__name__icontains=query)
+            | Q(service_name_snapshot__icontains=query)
+            | Q(plan_name_snapshot__icontains=query)
+            | Q(scope__icontains=query)
+        )
+
+    valid_statuses = {value for value, _label in Project.Status.choices}
+    if status in valid_statuses:
+        projects = projects.filter(status=status)
+    elif state == "delivered":
+        projects = projects.filter(status=Project.Status.DELIVERED)
+    elif state == "archived":
+        projects = projects.filter(status=Project.Status.ARCHIVED)
+    elif state == "all":
+        pass
+    else:
+        state = "active"
+        projects = projects.filter(status__in=ACTIVE_PROJECT_STATUSES)
+
+    projects = projects.order_by("due_at", "-created_at")
+    page = Paginator(projects, 25).get_page(request.GET.get("page"))
+
+    return render(
+        request,
+        "operations/project_list.html",
+        {
+            "page": page,
+            "query": query,
+            "selected_status": status if status in valid_statuses else "",
+            "selected_state": state,
+            "status_choices": Project.Status.choices,
+            "today": timezone.localdate(),
+        },
+    )
 
 
 @staff_member_required
@@ -86,7 +138,7 @@ def dashboard(request):
         .exclude(status=ProjectTask.Status.DONE)
         .filter(
             due_at__isnull=False,
-            due_at__lt=now,
+            due_at__lt=timezone.localdate(),
         )
         .order_by("due_at")[:8]
     )
@@ -159,7 +211,7 @@ def dashboard(request):
             )
             .filter(
                 due_at__isnull=False,
-                due_at__lt=now,
+                due_at__lt=timezone.localdate(),
             )
             .count(),
             "unhandled_inquiries": Inquiry.objects.filter(
@@ -216,13 +268,17 @@ def project_detail(request, project_id):
     return render(
         request,
         "operations/project_detail.html",
-        {
-            "project": project,
-            "project_form": ProjectDeliveryForm(instance=project),
-            "task_form": ProjectTaskForm(),
-            "task_status_choices": ProjectTask.Status.choices,
-        },
+        _project_context(project),
     )
+
+
+def _project_context(project, *, project_form=None, task_form=None):
+    return {
+        "project": project,
+        "project_form": project_form or ProjectDeliveryForm(instance=project),
+        "task_form": task_form or ProjectTaskForm(),
+        "task_status_choices": ProjectTask.Status.choices,
+    }
 
 
 @staff_member_required
@@ -258,6 +314,14 @@ def update_project(request, project_id):
             )
 
         if (
+            project.status != Project.Status.DELIVERED
+            and project.status != Project.Status.ARCHIVED
+            and project.delivered_at is not None
+        ):
+            project.delivered_at = None
+            project.save(update_fields=["delivered_at", "updated_at"])
+
+        if (
             project.status == Project.Status.DELIVERED
             and not was_delivered
         ):
@@ -282,7 +346,12 @@ def update_project(request, project_id):
     else:
         messages.error(
             request,
-            "Project details could not be updated.",
+            "Correct the highlighted project details and try again.",
+        )
+        return render(
+            request,
+            "operations/project_detail.html",
+            _project_context(project, project_form=form),
         )
 
     return redirect(
@@ -326,7 +395,12 @@ def create_task(request, project_id):
     else:
         messages.error(
             request,
-            "Task could not be added.",
+            "Correct the highlighted task details and try again.",
+        )
+        return render(
+            request,
+            "operations/project_detail.html",
+            _project_context(project, task_form=form),
         )
 
     return redirect(

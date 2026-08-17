@@ -1,6 +1,7 @@
 {% extends "layouts/base.html" %}
 
 {% block title %}Operations — {{ fora.brand.name }}{% endblock %}
+{% block meta_robots %}noindex,nofollow{% endblock %}
 
 {% block content %}
 
@@ -24,6 +25,7 @@
         </div>
 
         <div class="fora-ops-actions">
+          {% include "components/button_secondary.html" with href="/ops/projects/" label="All Projects" %}
           {% include "components/button_secondary.html" with href="/admin/" label="Open Admin" %}
           {% include "components/button_primary.html" with href="/admin/leads/lead/add/" label="Add Lead" %}
         </div>
