@@ -36,7 +36,7 @@
   <header class="fora-header">
     <div class="fora-container flex min-h-24 items-center justify-between gap-8">
       <a
-        href="/"
+        href="{% if is_operations %}{% url 'operations:dashboard' %}{% else %}/{% endif %}"
         class="fora-logo"
         aria-label="{{ fora.brand.name }} home"
       >
@@ -47,18 +47,22 @@
         class="hidden items-center gap-8 md:flex"
         aria-label="Primary navigation"
       >
-        {% for item in fora.navigation %}
-          <a
-            href="{{ item.href }}"
-            class="fora-nav-link"
-          >
-            {{ item.label }}
-          </a>
-        {% endfor %}
+        {% if is_operations %}
+          <a href="{% url 'operations:dashboard' %}" class="fora-nav-link">Dashboard</a>
+          <a href="{% url 'operations:project_list' %}" class="fora-nav-link">Projects</a>
+        {% else %}
+          {% for item in fora.navigation %}
+            <a href="{{ item.href }}" class="fora-nav-link">{{ item.label }}</a>
+          {% endfor %}
+        {% endif %}
       </nav>
 
       <div class="hidden md:block">
-        {% include "components/button_primary.html" with href=fora.primary_cta.href label=fora.primary_cta.label %}
+        {% if is_operations %}
+          {% include "components/button_secondary.html" with href="/admin/" label="Open Admin" %}
+        {% else %}
+          {% include "components/button_primary.html" with href=fora.primary_cta.href label=fora.primary_cta.label %}
+        {% endif %}
       </div>
 
       <details class="fora-mobile-menu md:hidden">
@@ -75,18 +79,23 @@
             class="grid gap-1"
             aria-label="Mobile navigation"
           >
-            {% for item in fora.navigation %}
-              <a
-                href="{{ item.href }}"
-                class="fora-mobile-nav-link"
-              >
-                {{ item.label }}
-              </a>
-            {% endfor %}
+            {% if is_operations %}
+              <a href="{% url 'operations:dashboard' %}" class="fora-mobile-nav-link">Dashboard</a>
+              <a href="{% url 'operations:project_list' %}" class="fora-mobile-nav-link">Projects</a>
+              <a href="/admin/" class="fora-mobile-nav-link">Admin</a>
+            {% else %}
+              {% for item in fora.navigation %}
+                <a href="{{ item.href }}" class="fora-mobile-nav-link">{{ item.label }}</a>
+              {% endfor %}
+            {% endif %}
           </nav>
 
           <div class="mt-6">
-            {% include "components/button_primary.html" with href=fora.primary_cta.href label=fora.primary_cta.label %}
+            {% if is_operations %}
+              {% include "components/button_secondary.html" with href="/admin/leads/lead/add/" label="Add Lead" %}
+            {% else %}
+              {% include "components/button_primary.html" with href=fora.primary_cta.href label=fora.primary_cta.label %}
+            {% endif %}
           </div>
         </div>
       </details>
@@ -106,13 +115,20 @@
     <div
       class="fora-container flex flex-col gap-3 py-10 text-sm text-fora-text-muted sm:flex-row sm:items-center sm:justify-between"
     >
-      <a href="/" class="fora-logo fora-logo-footer" aria-label="{{ fora.brand.name }} home">
+      <a href="{% if is_operations %}{% url 'operations:dashboard' %}{% else %}/{% endif %}" class="fora-logo fora-logo-footer" aria-label="{{ fora.brand.name }} home">
         <img src="{% static 'brand/fora-logo-light.svg' %}" alt="{{ fora.brand.name }}" width="98" height="28">
       </a>
 
-      <nav class="flex flex-wrap gap-5" aria-label="Legal">
-        <a href="{% url 'marketing:privacy' %}" class="hover:text-fora-text">Privacy</a>
-        <a href="{% url 'marketing:terms' %}" class="hover:text-fora-text">Terms</a>
+      <nav class="flex flex-wrap gap-5" aria-label="Footer navigation">
+        {% if is_operations %}
+          <a href="{% url 'operations:dashboard' %}" class="hover:text-fora-text">Dashboard</a>
+          <a href="{% url 'operations:project_list' %}" class="hover:text-fora-text">Projects</a>
+        {% else %}
+          <a href="{% url 'marketing:contact' %}" class="hover:text-fora-text">Contact</a>
+          <a href="{% url 'marketing:faq' %}" class="hover:text-fora-text">FAQ</a>
+          <a href="{% url 'marketing:privacy' %}" class="hover:text-fora-text">Privacy</a>
+          <a href="{% url 'marketing:terms' %}" class="hover:text-fora-text">Terms</a>
+        {% endif %}
       </nav>
       <p>{{ fora.business.category }}</p>
     </div>

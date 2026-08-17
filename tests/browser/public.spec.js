@@ -26,7 +26,7 @@ for (const [name, path] of publicPages) {
     await expect(page.locator("main")).toBeVisible();
     await assertRenderedLayout(page);
 
-    if (["home", "services", "pricing", "contact", "start"].includes(name)) {
+    if (["home", "services", "pricing", "process", "contact", "start"].includes(name)) {
       await revealPage(page);
       await page.screenshot({
         path: testInfo.outputPath(`${name}-full.png`),
@@ -130,11 +130,28 @@ test("FAQ controls are keyboard operable", async ({ page }) => {
   await expect(first).toHaveAttribute("open", "");
 });
 
+test("process sequence wraps only between connected units", async ({ page }) => {
+  await page.goto("/process/");
+  const sequence = page.locator(".fora-process-sequence");
+  await expect(sequence).toBeVisible();
+  await expect(sequence.locator(".fora-process-sequence-unit")).toHaveCount(4);
+  const units = await sequence.locator(".fora-process-sequence-unit").evaluateAll((elements) =>
+    elements.map((element) => ({
+      whiteSpace: getComputedStyle(element).whiteSpace,
+      arrow: element.querySelector(".fora-process-sequence-arrow")?.textContent.trim(),
+      step: element.querySelector(".fora-process-sequence-step")?.textContent.trim(),
+    }))
+  );
+  expect(units.every((unit) => unit.whiteSpace === "nowrap" && unit.arrow === "→" && unit.step)).toBe(true);
+});
+
 test("contact form validates and reaches success state", async ({ page }) => {
   await page.goto("/contact/");
   await page.getByLabel("Email").fill("not-an-email");
   await page.getByRole("button", { name: "Send Message" }).click();
   await expect(page.locator("body")).toContainText("Enter a valid email address");
+  await expect(page.getByLabel("Email")).toHaveAttribute("aria-invalid", "true");
+  await expect(page.locator("#id_email_error")).toHaveAttribute("role", "alert");
 
   await page.getByLabel("Name").fill("Browser QA Contact");
   await page.getByLabel("Email").fill("browser-contact@qa.example");
@@ -142,6 +159,12 @@ test("contact form validates and reaches success state", async ({ page }) => {
   await page.getByRole("button", { name: "Send Message" }).click();
   await expect(page).toHaveURL(/\/contact\/\?submitted=1$/);
   await expect(page.getByText("Your message has been submitted.")).toBeVisible();
+});
+
+test("submission success cannot be spoofed by query string", async ({ page }) => {
+  await page.goto("/start/?submitted=1");
+  await expect(page.getByRole("button", { name: "Submit Project" })).toBeVisible();
+  await expect(page.getByText("Your project inquiry has been submitted.")).toHaveCount(0);
 });
 
 test("project inquiry validates, preserves preselection, and succeeds", async ({ page }) => {

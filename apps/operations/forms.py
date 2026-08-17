@@ -30,8 +30,11 @@ class ProjectDeliveryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        for field in self.fields.values():
+        for name, field in self.fields.items():
             field.widget.attrs["class"] = INPUT_CLASS
+            if self.is_bound and name in self.errors:
+                field.widget.attrs["aria-invalid"] = "true"
+                field.widget.attrs["aria-describedby"] = f"id_{name}_error"
 
     def clean(self):
         cleaned_data = super().clean()
@@ -55,8 +58,11 @@ class ProjectTaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        for field in self.fields.values():
+        for name, field in self.fields.items():
             field.widget.attrs["class"] = INPUT_CLASS
+            if self.is_bound and name in self.errors:
+                field.widget.attrs["aria-invalid"] = "true"
+                field.widget.attrs["aria-describedby"] = f"id_{name}_error"
 
 
 class TaskStatusForm(forms.Form):

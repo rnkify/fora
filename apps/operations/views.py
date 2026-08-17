@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
 from apps.analytics.models import AnalyticsEvent
@@ -29,6 +30,7 @@ ACTIVE_PROJECT_STATUSES = tuple(
 
 
 @staff_member_required
+@never_cache
 def project_list(request):
     projects = Project.objects.select_related("client", "client__company")
     query = request.GET.get("q", "").strip()
@@ -74,6 +76,7 @@ def project_list(request):
 
 
 @staff_member_required
+@never_cache
 def dashboard(request):
     now = timezone.now()
     upcoming_window = now + timedelta(days=7)
@@ -229,6 +232,7 @@ def dashboard(request):
 
 @staff_member_required
 @require_POST
+@never_cache
 def start_project(request, lead_id):
     try:
         project = start_project_from_won_lead(
@@ -254,6 +258,7 @@ def start_project(request, lead_id):
 
 
 @staff_member_required
+@never_cache
 def project_detail(request, project_id):
     project = get_object_or_404(
         Project.objects.select_related(
@@ -283,6 +288,7 @@ def _project_context(project, *, project_form=None, task_form=None):
 
 @staff_member_required
 @require_POST
+@never_cache
 def update_project(request, project_id):
     project = get_object_or_404(
         Project,
@@ -362,6 +368,7 @@ def update_project(request, project_id):
 
 @staff_member_required
 @require_POST
+@never_cache
 def create_task(request, project_id):
     project = get_object_or_404(
         Project,
@@ -411,6 +418,7 @@ def create_task(request, project_id):
 
 @staff_member_required
 @require_POST
+@never_cache
 def update_task_status(request, project_id, task_id):
     task = get_object_or_404(
         ProjectTask,

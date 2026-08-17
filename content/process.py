@@ -4,5 +4,9 @@ PROCESS_INTRO = (
 )
 
 PROCESS_PRINCIPLE = (
-    "Research → Build → Evaluate → Refine → Deliver"
+    "Research",
+    "Build",
+    "Evaluate",
+    "Refine",
+    "Deliver",
 )

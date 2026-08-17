@@ -28,7 +28,7 @@ class HomeContent:
 @dataclass(frozen=True)
 class ProcessContent:
     intro: str
-    principle: str
+    principle: tuple[str, ...]
 
 
 def get_home_content() -> HomeContent:

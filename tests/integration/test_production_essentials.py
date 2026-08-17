@@ -1,6 +1,7 @@
 import pytest
 from django.test import override_settings
 from django.urls import reverse
+from django.views.defaults import server_error
 
 
 @pytest.mark.django_db
@@ -12,6 +13,14 @@ def test_health_and_readiness(client):
     assert health.json()["status"] == "ok"
     assert ready.status_code == 200
     assert ready.json()["database"] == "ok"
+
+
+def test_custom_500_response_is_safe(rf):
+    response = server_error(rf.get("/forced-error/"))
+
+    assert response.status_code == 500
+    assert b"Something went wrong." in response.content
+    assert b"Traceback" not in response.content
 
 
 @pytest.mark.django_db
@@ -51,6 +60,18 @@ def test_page_specific_social_metadata(client):
     assert b'<meta name="twitter:title" content="Pricing \xe2\x80\x94 Fora">' in pricing.content
     assert b'<meta property="og:title" content="AI Systems \xe2\x80\x94 Fora">' in service.content
     assert b"Reusable AI workflows, prompts, structured outputs" in service.content
+
+
+@pytest.mark.django_db
+def test_operations_pages_are_noindex_and_use_internal_navigation(client, django_user_model):
+    staff = django_user_model.objects.create_user("staff", is_staff=True)
+    client.force_login(staff)
+
+    response = client.get(reverse("operations:dashboard"))
+
+    assert b'<meta name="robots" content="noindex,nofollow">' in response.content
+    assert b'href="/ops/projects/"' in response.content
+    assert b">Dashboard<" in response.content
 
 
 @pytest.mark.django_db

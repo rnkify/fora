@@ -85,6 +85,23 @@ def test_invalid_project_selection_is_rejected(client):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("route", ("marketing:contact", "marketing:start_project"))
+def test_public_forms_reject_oversized_messages(client, route):
+    response = client.post(
+        reverse(route),
+        {
+            "name": "Example Person",
+            "email": "person@example.com",
+            "message": "x" * 5001,
+        },
+    )
+
+    assert response.status_code == 200
+    assert b"Ensure this value has at most 5000 characters" in response.content
+    assert Inquiry.objects.count() == 0
+
+
+@pytest.mark.django_db
 def test_project_submission_creates_crm_lead(client):
     from apps.leads.models import Company, Contact, Lead
 
@@ -158,6 +175,31 @@ def test_repeated_project_submission_reuses_company_and_contact(client):
     assert Company.objects.count() == 1
     assert Contact.objects.count() == 1
     assert Lead.objects.count() == 2
+
+
+@pytest.mark.django_db
+def test_immediate_identical_project_retry_is_idempotent(client):
+    from apps.leads.models import Company, Contact, Lead
+
+    payload = {
+        "name": "Jane Example",
+        "email": "jane@example.com",
+        "company": "Example Studio",
+        "website": "https://example.com",
+        "service_interest_id": "ai_systems",
+        "plan_interest_id": "growth",
+        "message": "Build one repeatable workflow.",
+    }
+
+    first = client.post(reverse("marketing:start_project"), payload)
+    second = client.post(reverse("marketing:start_project"), payload)
+
+    assert first.status_code == 302
+    assert second.status_code == 302
+    assert Inquiry.objects.count() == 1
+    assert Company.objects.count() == 1
+    assert Contact.objects.count() == 1
+    assert Lead.objects.count() == 1
 
 
 @pytest.mark.django_db

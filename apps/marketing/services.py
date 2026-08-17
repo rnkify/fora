@@ -1,3 +1,8 @@
+from datetime import timedelta
+
+from django.db import transaction
+from django.utils import timezone
+
 from apps.marketing.crm import convert_project_inquiry_to_lead
 from apps.marketing.models import Inquiry
 from apps.marketing.notifications import notify_new_inquiry
@@ -29,7 +34,24 @@ def create_contact_inquiry(*, request, cleaned_data):
     return inquiry
 
 
+@transaction.atomic
 def create_project_inquiry(*, request, cleaned_data):
+    duplicate_since = timezone.now() - timedelta(minutes=5)
+    duplicate = Inquiry.objects.filter(
+        type=Inquiry.Type.PROJECT,
+        name__iexact=cleaned_data["name"],
+        email__iexact=cleaned_data["email"],
+        company__iexact=cleaned_data.get("company", ""),
+        website__iexact=cleaned_data.get("website", ""),
+        service_interest_id=cleaned_data.get("service_interest_id", ""),
+        plan_interest_id=cleaned_data.get("plan_interest_id", ""),
+        message=cleaned_data["message"],
+        created_at__gte=duplicate_since,
+    ).first()
+
+    if duplicate is not None:
+        return duplicate
+
     inquiry = Inquiry.objects.create(
         type=Inquiry.Type.PROJECT,
         name=cleaned_data["name"],

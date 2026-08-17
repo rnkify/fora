@@ -155,7 +155,10 @@ def faq(request):
 
 
 def contact(request):
-    submitted = request.GET.get("submitted") == "1"
+    submitted = (
+        request.GET.get("submitted") == "1"
+        and request.session.pop("contact_submitted", False)
+    )
 
     if request.method == "GET" and not submitted:
         record_request_event(
@@ -180,6 +183,7 @@ def contact(request):
                 },
             )
 
+            request.session["contact_submitted"] = True
             return redirect(f"{reverse('marketing:contact')}?submitted=1")
     else:
         form = ContactForm()
@@ -196,7 +200,10 @@ def contact(request):
 
 
 def start_project(request):
-    submitted = request.GET.get("submitted") == "1"
+    submitted = (
+        request.GET.get("submitted") == "1"
+        and request.session.pop("project_submitted", False)
+    )
 
     if request.method == "GET" and not submitted:
         record_request_event(
@@ -223,6 +230,7 @@ def start_project(request):
                 },
             )
 
+            request.session["project_submitted"] = True
             return redirect(f"{reverse('marketing:start_project')}?submitted=1")
     else:
         form = ProjectInquiryForm(

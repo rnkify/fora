@@ -28,6 +28,7 @@ def fora_configuration(request: HttpRequest) -> dict:
     return {
         "fora": get_configuration(),
         "app_url": settings.APP_URL.rstrip("/"),
+        "is_operations": view_name.startswith("operations:"),
         "social_title": social_title,
         "social_description": social_description,
     }

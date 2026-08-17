@@ -96,7 +96,7 @@ Start a project with Fora for AI systems, conversion copy, content systems, or a
                 {% endif %}
 
                 {% if field.errors %}
-                  <div class="mt-2 text-sm text-fora-danger">
+                  <div id="{{ field.id_for_label }}_error" class="mt-2 text-sm text-fora-danger" role="alert">
                     {{ field.errors|striptags }}
                   </div>
                 {% endif %}

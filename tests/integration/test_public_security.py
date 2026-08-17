@@ -50,3 +50,26 @@ def test_start_rejects_unknown_service(client):
 
     assert response.status_code == 200
     assert Inquiry.objects.count() == 0
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("route", ("marketing:contact", "marketing:start_project"))
+def test_success_query_cannot_spoof_a_submission(client, route):
+    response = client.get(reverse(route), {"submitted": "1"})
+
+    assert response.status_code == 200
+    assert b"csrfmiddlewaretoken" in response.content
+    assert b"has been submitted" not in response.content
+
+
+@pytest.mark.django_db
+def test_invalid_fields_reference_accessible_error_messages(client):
+    response = client.post(
+        reverse("marketing:contact"),
+        {"name": "", "email": "invalid", "message": ""},
+    )
+
+    assert b'aria-invalid="true"' in response.content
+    assert b'aria-describedby="id_email_error"' in response.content
+    assert b'id="id_email_error"' in response.content
+    assert b'role="alert"' in response.content

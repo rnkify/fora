@@ -65,7 +65,7 @@ Contact Fora about AI systems, conversion work, partnerships, or general questio
                 {{ field }}
 
                 {% if field.errors %}
-                  <div class="mt-2 text-sm text-fora-danger">
+                  <div id="{{ field.id_for_label }}_error" class="mt-2 text-sm text-fora-danger" role="alert">
                     {{ field.errors|striptags }}
                   </div>
                 {% endif %}

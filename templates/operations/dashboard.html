@@ -395,10 +395,10 @@
                     </span>
 
                     <a
-                      href="/admin/projects/project/{{ project.id }}/change/"
+                      href="{% url 'operations:project_detail' project.id %}"
                       class="fora-ops-row-link"
                     >
-                      Open →
+                      Workspace →
                     </a>
                   </div>
                 </article>
@@ -425,7 +425,7 @@
           {% if overdue_tasks %}
             <div class="fora-ops-list">
               {% for task in overdue_tasks %}
-                <article class="fora-ops-row">
+                <article class="fora-ops-row md:grid-cols-[1fr_auto] md:items-start">
                   <div>
                     <p class="fora-ops-row-title">
                       {{ task.title }}
@@ -439,6 +439,7 @@
                       Due {{ task.due_at }}
                     </p>
                   </div>
+                  <a href="{% url 'operations:project_detail' task.project.id %}" class="fora-ops-row-link">Project →</a>
                 </article>
               {% endfor %}
             </div>

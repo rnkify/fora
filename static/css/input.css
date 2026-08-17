@@ -581,6 +581,34 @@
     padding-top: 1.25rem;
   }
 
+  .fora-process-sequence {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.45rem 0.7rem;
+    margin: 0;
+    font-size: clamp(1.65rem, 3vw, 2.75rem);
+    font-weight: 650;
+    letter-spacing: -0.045em;
+    line-height: 1.12;
+  }
+
+  .fora-process-sequence-step {
+    white-space: nowrap;
+  }
+
+  .fora-process-sequence-unit {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .fora-process-sequence-arrow {
+    color: var(--color-fora-text-subtle);
+    font-weight: 400;
+  }
+
   @media (max-width: 800px) {
     .fora-content-grid {
       grid-template-columns: minmax(0, 1fr);

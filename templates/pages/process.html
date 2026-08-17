@@ -37,8 +37,17 @@ How Fora researches, builds, evaluates, refines, and delivers AI systems and con
     <div class="fora-content-grid">
       <div>
         <p class="fora-eyebrow">Operating principle</p>
-        <h2 class="fora-heading">
-          {{ process.principle }}
+        <h2 class="fora-process-sequence" aria-label="Research, Build, Evaluate, Refine, Deliver">
+          {% for step in process.principle %}
+            {% if forloop.first %}
+              <span class="fora-process-sequence-step">{{ step }}</span>
+            {% else %}
+              <span class="fora-process-sequence-unit">
+                <span class="fora-process-sequence-arrow" aria-hidden="true">→</span>
+                <span class="fora-process-sequence-step">{{ step }}</span>
+              </span>
+            {% endif %}
+          {% endfor %}
         </h2>
       </div>
 

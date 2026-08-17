@@ -15,6 +15,10 @@ test("operations pages require staff permissions", async ({ page }) => {
 test("dashboard and project list render responsively", async ({ page }, testInfo) => {
   await loginAsStaff(page);
   await expect(page.getByRole("heading", { name: "Business overview." })).toBeVisible();
+  const navigationName = page.viewportSize().width >= 768 ? "Primary navigation" : "Mobile navigation";
+  const navigation = page.getByRole("navigation", { name: navigationName, includeHidden: true });
+  await expect(navigation).toContainText("Dashboard");
+  await expect(navigation).toContainText("Projects");
   await assertRenderedLayout(page);
   await page.screenshot({ path: testInfo.outputPath("ops-dashboard-full.png"), fullPage: true });
 

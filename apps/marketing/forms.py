@@ -23,7 +23,7 @@ class ForaFormMixin:
     )
 
     def style_fields(self):
-        for field in self.fields.values():
+        for name, field in self.fields.items():
             widget = field.widget
 
             if isinstance(widget, forms.Textarea):
@@ -33,13 +33,22 @@ class ForaFormMixin:
             else:
                 widget.attrs["class"] = self.text_input_class
 
+            if self.is_bound and name in self.errors:
+                widget.attrs["aria-invalid"] = "true"
+                widget.attrs["aria-describedby"] = f"id_{name}_error"
+                if not any(
+                    existing.widget.attrs.get("autofocus")
+                    for existing in self.fields.values()
+                ):
+                    widget.attrs["autofocus"] = True
+
 
 class ContactForm(ForaFormMixin, forms.Form):
     name = forms.CharField(max_length=120)
     email = forms.EmailField()
     company = forms.CharField(max_length=160, required=False)
     website = forms.URLField(required=False, assume_scheme="https")
-    message = forms.CharField(widget=forms.Textarea)
+    message = forms.CharField(max_length=5000, widget=forms.Textarea)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -66,6 +75,7 @@ class ProjectInquiryForm(ForaFormMixin, forms.Form):
 
     message = forms.CharField(
         label="What are you trying to improve?",
+        max_length=5000,
         widget=forms.Textarea,
     )
 
