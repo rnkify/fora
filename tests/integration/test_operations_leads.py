@@ -84,3 +84,48 @@ def test_staff_can_add_lead_activity_and_invalid_score_is_rejected(client):
     )
     assert response.status_code == 400
     assert b"Score must be between 0 and 100." in response.content
+
+
+@pytest.mark.django_db
+def test_score_guidance_is_visible_and_accessibly_associated(client):
+    user = get_user_model().objects.create_user("score-staff", is_staff=True)
+    lead = make_lead()
+    client.force_login(user)
+
+    response = client.get(reverse("operations:lead_detail", args=[lead.pk]))
+
+    assert "0\u201339 Low fit".encode() in response.content
+    assert b'min="0"' in response.content
+    assert b'max="100"' in response.content
+    assert b'aria-describedby="id_score_helptext"' in response.content
+
+
+@pytest.mark.django_db
+def test_transition_to_won_clears_sales_next_action(client):
+    user = get_user_model().objects.create_user("won-staff", is_staff=True)
+    lead = make_lead()
+    lead.next_action_at = "2026-08-20T10:30:00Z"
+    lead.save(update_fields=["next_action_at", "updated_at"])
+    client.force_login(user)
+
+    response = client.post(
+        reverse("operations:update_lead", args=[lead.pk]),
+        {
+            "status": Lead.Status.WON,
+            "score": 85,
+            "estimated_value": "1800.00",
+            "service_interest_id": "ai_systems",
+            "plan_interest_id": "growth",
+            "next_action_at": "2026-08-20T10:30",
+            "notes": lead.notes,
+        },
+    )
+
+    assert response.status_code == 302
+    lead.refresh_from_db()
+    assert lead.status == Lead.Status.WON
+    assert lead.next_action_at is None
+
+    response = client.get(reverse("operations:lead_detail", args=[lead.pk]))
+    assert b"Sales follow-up complete" in response.content
+    assert b'id_next_action_at' not in response.content

@@ -38,6 +38,24 @@
 </section>
 
 
+<section class="fora-section-tight border-y border-fora-border" data-reveal="soft">
+  <div class="fora-container">
+    <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+      <div>
+        <p class="fora-eyebrow">What you may receive</p>
+        <h2 class="fora-heading">Practical assets your team can use.</h2>
+        <p class="fora-copy mt-5">Exact deliverables are agreed before work begins and depend on the project scope.</p>
+      </div>
+      <ul class="grid gap-3 sm:grid-cols-2" aria-label="Example deliverables">
+        {% for deliverable in service.deliverables %}
+          <li class="fora-card flex min-h-24 items-center px-5 py-4 text-sm font-semibold leading-6">{{ deliverable }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+
 <section data-reveal="soft" class="fora-section-tight border-y border-fora-border">
   <div class="fora-container">
     <div class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
@@ -70,8 +88,8 @@
           </h3>
 
           <p class="fora-copy mt-3">
-            Fora develops a focused system or deliverable designed around the
-            specific use case rather than applying a generic template.
+            Fora designs and implements a focused system or deliverable around
+            the specific use case rather than applying a generic template.
           </p>
         </article>
 

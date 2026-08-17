@@ -73,6 +73,22 @@ ProjectTask.objects.create(
     position=1,
 )
 
+qualification_company = Company.objects.create(name="QA Qualification Lead")
+qualification_contact = Contact.objects.create(
+    company=qualification_company,
+    name="Casey Qualifier",
+    email="casey@qa.example",
+)
+Lead.objects.create(
+    company=qualification_company,
+    primary_contact=qualification_contact,
+    source=Lead.Source.WEBSITE,
+    status=Lead.Status.NEW,
+    service_interest_id="content_systems",
+    plan_interest_id="growth",
+    notes="Qualify this deterministic browser QA lead.",
+)
+
 ready_company = Company.objects.create(name="QA Won Lead")
 ready_contact = Contact.objects.create(
     company=ready_company,

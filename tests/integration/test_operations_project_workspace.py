@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from apps.clients.models import Client
 from apps.leads.models import Company
-from apps.projects.models import Project, ProjectTask
+from apps.projects.models import Project, ProjectActivity, ProjectTask
 
 
 def make_staff():
@@ -99,6 +99,12 @@ def test_staff_can_update_project(client):
     assert str(project.due_at) == "2026-08-30"
     assert project.revision_count == 1
     assert project.notes == "Research started."
+    activities = list(project.activities.order_by("created_at"))
+    assert [activity.type for activity in activities] == [
+        ProjectActivity.Type.STATUS_CHANGE,
+        ProjectActivity.Type.DUE_DATE_CHANGE,
+    ]
+    assert all(activity.actor == user for activity in activities)
 
 
 @pytest.mark.django_db
@@ -174,6 +180,7 @@ def test_reopening_delivered_project_clears_delivery_date(client):
 
     project.refresh_from_db()
     assert project.delivered_at is None
+    assert project.activities.get().type == ProjectActivity.Type.REOPENED
 
 
 @pytest.mark.django_db
@@ -200,6 +207,7 @@ def test_staff_can_add_project_task(client):
 
     assert task.project == project
     assert task.title == "Complete customer research"
+    assert project.activities.get().type == ProjectActivity.Type.TASK_CREATED
 
 
 @pytest.mark.django_db
@@ -229,3 +237,44 @@ def test_staff_can_update_task_status(client):
     task.refresh_from_db()
 
     assert task.status == ProjectTask.Status.DONE
+    activity = project.activities.get()
+    assert activity.type == ProjectActivity.Type.TASK_STATUS_CHANGE
+    assert "Draft workflow" in activity.description
+
+
+@pytest.mark.django_db
+def test_staff_can_add_manual_project_activity(client):
+    user = make_staff()
+    project = make_project()
+    client.force_login(user)
+
+    response = client.post(
+        reverse("operations:create_project_activity", args=[project.pk]),
+        {"description": "Confirmed the sample brief set."},
+    )
+
+    assert response.status_code == 302
+    activity = project.activities.get()
+    assert activity.type == ProjectActivity.Type.NOTE
+    assert activity.description == "Confirmed the sample brief set."
+    assert activity.actor == user
+
+
+@pytest.mark.django_db
+def test_project_workspace_shows_activity_timeline(client):
+    user = make_staff()
+    project = make_project()
+    ProjectActivity.objects.create(
+        project=project,
+        type=ProjectActivity.Type.NOTE,
+        description="Reviewed the workflow map.",
+        occurred_at="2026-08-17T10:00:00Z",
+        actor=user,
+    )
+    client.force_login(user)
+
+    response = client.get(reverse("operations:project_detail", args=[project.pk]))
+
+    assert b"Project activity" in response.content
+    assert b"Reviewed the workflow map." in response.content
+    assert b"Add Project Note" in response.content

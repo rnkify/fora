@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from apps.clients.models import Client
@@ -96,3 +97,37 @@ class ProjectTask(TimeStampedModel):
 
     def __str__(self) -> str:
         return self.title
+
+
+class ProjectActivity(TimeStampedModel):
+    class Type(models.TextChoices):
+        CREATED = "created", "Project created"
+        STATUS_CHANGE = "status_change", "Status change"
+        DUE_DATE_CHANGE = "due_date_change", "Due date change"
+        NOTE = "note", "Internal note"
+        TASK_CREATED = "task_created", "Task created"
+        TASK_STATUS_CHANGE = "task_status_change", "Task status change"
+        DELIVERED = "delivered", "Project delivered"
+        REOPENED = "reopened", "Project reopened"
+
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        related_name="activities",
+    )
+    type = models.CharField(max_length=30, choices=Type.choices)
+    description = models.TextField()
+    occurred_at = models.DateTimeField()
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="project_activities",
+    )
+
+    class Meta:
+        ordering = ["-occurred_at", "-created_at"]
+
+    def __str__(self) -> str:
+        return f"{self.project} — {self.get_type_display()}"

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.projects.models import Project, ProjectTask
+from apps.projects.models import Project, ProjectActivity, ProjectTask
 
 
 class ProjectTaskInline(admin.TabularInline):
@@ -36,3 +36,11 @@ class ProjectTaskAdmin(admin.ModelAdmin):
     list_display = ("title", "project", "status", "due_at", "position")
     list_filter = ("status",)
     search_fields = ("title", "project__client__company__name")
+
+
+@admin.register(ProjectActivity)
+class ProjectActivityAdmin(admin.ModelAdmin):
+    list_display = ("project", "type", "actor", "occurred_at")
+    list_filter = ("type",)
+    search_fields = ("project__client__company__name", "description")
+    readonly_fields = ("created_at", "updated_at")

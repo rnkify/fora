@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from apps.clients.models import Client
 from apps.leads.models import Company, Contact, Lead, LeadActivity
-from apps.projects.models import Project
+from apps.projects.models import Project, ProjectActivity
 
 
 def create_staff_user():
@@ -61,6 +61,10 @@ def test_won_lead_can_create_client_and_project(client):
         company=lead.company
     )
     project = Project.objects.get()
+    assert response.url == reverse(
+        "operations:project_detail",
+        args=[project.pk],
+    )
 
     assert created_client.status == Client.Status.ACTIVE
     assert created_client.since == timezone.localdate()
@@ -76,6 +80,9 @@ def test_won_lead_can_create_client_and_project(client):
         lead=lead,
         type=LeadActivity.Type.STATUS_CHANGE,
     ).exists()
+    activity = ProjectActivity.objects.get(project=project)
+    assert activity.type == ProjectActivity.Type.CREATED
+    assert activity.actor == user
 
 
 @pytest.mark.django_db
@@ -95,6 +102,7 @@ def test_non_won_lead_cannot_create_project(client):
     assert response.status_code == 302
     assert Project.objects.count() == 0
     assert Client.objects.count() == 0
+    assert response.url == reverse("operations:lead_detail", args=[lead.pk])
 
 
 @pytest.mark.django_db
@@ -117,6 +125,9 @@ def test_same_won_lead_cannot_create_two_projects(client):
 
     assert Project.objects.count() == 1
     assert Client.objects.count() == 1
+    project = Project.objects.get()
+    assert first.url == reverse("operations:project_detail", args=[project.pk])
+    assert second.url == reverse("operations:lead_detail", args=[lead.pk])
 
 
 @pytest.mark.django_db

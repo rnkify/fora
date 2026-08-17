@@ -1,8 +1,10 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import ValidationError
 
 from apps.core.configuration import get_enabled_plans, get_enabled_services
 from apps.leads.models import Lead, LeadActivity
-from apps.projects.models import Project, ProjectTask
+from apps.projects.models import Project, ProjectActivity, ProjectTask
 
 INPUT_CLASS = (
     "w-full rounded-fora-sm border border-fora-border "
@@ -80,6 +82,43 @@ class TaskStatusForm(forms.Form):
     )
 
 
+class ProjectActivityForm(forms.ModelForm):
+    class Meta:
+        model = ProjectActivity
+        fields = ("description",)
+        labels = {"description": "Note"}
+        widgets = {"description": forms.Textarea(attrs={"rows": 4})}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["description"].widget.attrs["class"] = INPUT_CLASS
+        if self.is_bound and "description" in self.errors:
+            self.fields["description"].widget.attrs.update({
+                "aria-invalid": "true",
+                "aria-describedby": "id_description_error",
+            })
+
+
+class StaffAuthenticationForm(AuthenticationForm):
+    error_messages = {
+        **AuthenticationForm.error_messages,
+        "not_staff": "This account does not have access to Fora operations.",
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs["class"] = INPUT_CLASS
+
+    def confirm_login_allowed(self, user):
+        super().confirm_login_allowed(user)
+        if not user.is_staff:
+            raise ValidationError(
+                self.error_messages["not_staff"],
+                code="not_staff",
+            )
+
+
 class LeadForm(forms.ModelForm):
     class Meta:
         model = Lead
@@ -115,11 +154,21 @@ class LeadForm(forms.ModelForm):
                 *[(item.id, item.name) for item in get_enabled_plans()],
             ],
         )
+        self.fields["score"].help_text = (
+            "0–39 Low fit · 40–59 Possible fit · "
+            "60–79 Good fit · 80–100 Strong fit"
+        )
+        self.fields["score"].widget.attrs.update({"min": "0", "max": "100"})
         for name, field in self.fields.items():
             field.widget.attrs["class"] = INPUT_CLASS
+            descriptions = []
+            if field.help_text:
+                descriptions.append(f"id_{name}_helptext")
             if self.is_bound and name in self.errors:
                 field.widget.attrs["aria-invalid"] = "true"
-                field.widget.attrs["aria-describedby"] = f"id_{name}_error"
+                descriptions.append(f"id_{name}_error")
+            if descriptions:
+                field.widget.attrs["aria-describedby"] = " ".join(descriptions)
 
     def clean_score(self):
         score = self.cleaned_data["score"]

@@ -35,6 +35,9 @@ SECURE_SSL_REDIRECT = env_bool(
     "SECURE_SSL_REDIRECT",
     True,
 )
+# Railway probes this non-sensitive liveness endpoint over its private HTTP
+# network. Keep every public application route HTTPS-only.
+SECURE_REDIRECT_EXEMPT = [r"^health/$"]
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

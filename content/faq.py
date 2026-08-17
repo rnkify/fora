@@ -13,9 +13,21 @@ FAQS = (
         id="what-fora-does",
         question="What does Fora actually do?",
         answer=(
-            "Fora designs AI systems, conversion-focused copy, content "
-            "systems, and automation strategies for agencies and growing "
-            "technology businesses."
+            "Fora is a professional service business. We learn how your team "
+            "works, then design, test, refine, document, and hand off AI "
+            "systems, conversion copy, content systems, or automation plans. "
+            "The website explains the services and collects project inquiries; "
+            "it does not automatically build the solution after submission."
+        ),
+    ),
+    FAQItem(
+        id="software-or-service",
+        question="Is Fora software I subscribe to?",
+        answer=(
+            "No. Fora sells scoped professional services rather than access to "
+            "a self-service AI platform. When useful, the engagement can build "
+            "around tools your team already uses and includes practical "
+            "documentation and handoff."
         ),
     ),
     FAQItem(

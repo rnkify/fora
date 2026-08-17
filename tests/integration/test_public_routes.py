@@ -48,6 +48,31 @@ def test_service_detail_ctas_prefill_the_matching_service(client, route_name, se
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("route_name", (
+    "marketing:service_ai_systems",
+    "marketing:service_conversion_copy",
+    "marketing:service_content_systems",
+    "marketing:service_automation",
+))
+def test_service_pages_explain_example_deliverables(client, route_name):
+    response = client.get(reverse(route_name))
+
+    assert b"What you may receive" in response.content
+    assert b"Exact deliverables" in response.content
+
+
+@pytest.mark.django_db
+def test_public_copy_distinguishes_service_from_software(client):
+    home = client.get(reverse("marketing:home"))
+    process = client.get(reverse("marketing:process"))
+    faq = client.get(reverse("marketing:faq"))
+
+    assert b"Expert implementation, not another AI subscription" in home.content
+    assert b"A service, not a self-serve platform" in process.content
+    assert b"does not automatically build the solution" in faq.content
+
+
+@pytest.mark.django_db
 @override_settings(DEBUG=False)
 def test_custom_404_is_rendered(client):
     response = client.get("/definitely-not-a-public-route/")

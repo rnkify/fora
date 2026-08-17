@@ -64,7 +64,7 @@ async function assertRenderedLayout(page) {
 }
 
 async function loginAsStaff(page) {
-  await page.goto("/admin/login/?next=/ops/");
+  await page.goto("/ops/login/?next=/ops/");
   await page.getByLabel("Username").fill("qa-staff");
   await page.getByLabel("Password").fill("qa-browser-password");
   await page.getByRole("button", { name: "Log in" }).click();

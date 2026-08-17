@@ -7,6 +7,7 @@ class ServiceConfig:
     name: str
     short_description: str
     path: str
+    deliverables: tuple[str, ...]
     enabled: bool = True
 
 
@@ -19,6 +20,13 @@ SERVICES = {
             "evaluation systems, and internal assistants."
         ),
         path="/services/ai-systems/",
+        deliverables=(
+            "Workflow map",
+            "Reusable prompt and workflow architecture",
+            "Implementation setup",
+            "Evaluation criteria",
+            "Operating documentation and team handoff",
+        ),
     ),
     "conversion_copy": ServiceConfig(
         id="conversion_copy",
@@ -28,6 +36,13 @@ SERVICES = {
             "advertising, and conversion-focused optimization."
         ),
         path="/services/conversion-copy/",
+        deliverables=(
+            "Messaging framework",
+            "Landing-page copy",
+            "Email sequences",
+            "Offer positioning",
+            "Reusable messaging guidance",
+        ),
     ),
     "content_systems": ServiceConfig(
         id="content_systems",
@@ -37,6 +52,14 @@ SERVICES = {
             "systems for consistent high-quality output."
         ),
         path="/services/content-systems/",
+        deliverables=(
+            "Structured content intake",
+            "Reusable AI workflow and prompt templates",
+            "Output templates",
+            "Quality-control checklist",
+            "Tested sample workflows",
+            "Operating SOP and implementation documentation",
+        ),
     ),
     "automation_consulting": ServiceConfig(
         id="automation_consulting",
@@ -46,5 +69,12 @@ SERVICES = {
             "and automation planning."
         ),
         path="/services/ai-automation/",
+        deliverables=(
+            "Workflow audit",
+            "Prioritized automation opportunities",
+            "Implementation plan",
+            "Configured workflows where included in scope",
+            "Documentation and team handoff",
+        ),
     ),
 }

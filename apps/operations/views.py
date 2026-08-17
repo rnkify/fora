@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.views import LoginView
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db.models import Count, Q, Sum
@@ -14,15 +14,18 @@ from apps.analytics.models import AnalyticsEvent
 from apps.analytics.services import record_event
 from apps.leads.models import Lead
 from apps.marketing.models import Inquiry
+from apps.operations.auth import staff_required
 from apps.operations.forms import (
     LeadActivityForm,
     LeadForm,
+    ProjectActivityForm,
     ProjectDeliveryForm,
     ProjectTaskForm,
+    StaffAuthenticationForm,
     TaskStatusForm,
 )
 from apps.operations.services import start_project_from_won_lead
-from apps.projects.models import Project, ProjectTask
+from apps.projects.models import Project, ProjectActivity, ProjectTask
 
 ACTIVE_PROJECT_STATUSES = tuple(
     value
@@ -31,7 +34,13 @@ ACTIVE_PROJECT_STATUSES = tuple(
 )
 
 
-@staff_member_required
+class OperationsLoginView(LoginView):
+    authentication_form = StaffAuthenticationForm
+    template_name = "operations/login.html"
+    next_page = "operations:dashboard"
+
+
+@staff_required
 @never_cache
 def lead_list(request):
     leads = Lead.objects.select_related("company", "primary_contact")
@@ -56,7 +65,7 @@ def lead_list(request):
     })
 
 
-@staff_member_required
+@staff_required
 @never_cache
 def lead_detail(request, lead_id):
     lead = get_object_or_404(
@@ -76,7 +85,7 @@ def _lead_context(lead, *, lead_form=None, activity_form=None):
     }
 
 
-@staff_member_required
+@staff_required
 @require_POST
 @never_cache
 def update_lead(request, lead_id):
@@ -84,7 +93,10 @@ def update_lead(request, lead_id):
     previous_status = lead.status
     form = LeadForm(request.POST, instance=lead)
     if form.is_valid():
-        lead = form.save()
+        lead = form.save(commit=False)
+        if lead.status == Lead.Status.WON:
+            lead.next_action_at = None
+        lead.save()
         if previous_status != lead.status:
             previous_label = Lead.Status(previous_status).label
             lead.activities.create(
@@ -108,7 +120,7 @@ def update_lead(request, lead_id):
     )
 
 
-@staff_member_required
+@staff_required
 @require_POST
 @never_cache
 def create_lead_activity(request, lead_id):
@@ -132,7 +144,7 @@ def create_lead_activity(request, lead_id):
     )
 
 
-@staff_member_required
+@staff_required
 @never_cache
 def project_list(request):
     projects = Project.objects.select_related("client", "client__company")
@@ -178,7 +190,7 @@ def project_list(request):
     )
 
 
-@staff_member_required
+@staff_required
 @never_cache
 def dashboard(request):
     now = timezone.now()
@@ -221,6 +233,7 @@ def dashboard(request):
             next_action_at__gte=now,
             next_action_at__lte=upcoming_window,
         )
+        .exclude(status=Lead.Status.WON)
         .order_by("next_action_at")[:8]
     )
 
@@ -333,13 +346,14 @@ def dashboard(request):
     )
 
 
-@staff_member_required
+@staff_required
 @require_POST
 @never_cache
 def start_project(request, lead_id):
     try:
         project = start_project_from_won_lead(
             lead_id=lead_id,
+            actor=request.user,
         )
     except Lead.DoesNotExist:
         messages.error(
@@ -357,10 +371,15 @@ def start_project(request, lead_id):
             f"Project #{project.pk} created successfully.",
         )
 
-    return redirect("operations:dashboard")
+        return redirect(
+            "operations:project_detail",
+            project_id=project.pk,
+        )
+
+    return redirect("operations:lead_detail", lead_id=lead_id)
 
 
-@staff_member_required
+@staff_required
 @never_cache
 def project_detail(request, project_id):
     project = get_object_or_404(
@@ -369,7 +388,7 @@ def project_detail(request, project_id):
             "client__company",
             "source_lead",
             "source_lead__primary_contact",
-        ).prefetch_related("tasks"),
+        ).prefetch_related("tasks", "activities__actor"),
         pk=project_id,
     )
 
@@ -380,16 +399,23 @@ def project_detail(request, project_id):
     )
 
 
-def _project_context(project, *, project_form=None, task_form=None):
+def _project_context(
+    project,
+    *,
+    project_form=None,
+    task_form=None,
+    activity_form=None,
+):
     return {
         "project": project,
         "project_form": project_form or ProjectDeliveryForm(instance=project),
         "task_form": task_form or ProjectTaskForm(),
+        "project_activity_form": activity_form or ProjectActivityForm(),
         "task_status_choices": ProjectTask.Status.choices,
     }
 
 
-@staff_member_required
+@staff_required
 @require_POST
 @never_cache
 def update_project(request, project_id):
@@ -397,6 +423,9 @@ def update_project(request, project_id):
         Project,
         pk=project_id,
     )
+
+    previous_status = project.status
+    previous_due_at = project.due_at
 
     was_delivered = (
         project.status == Project.Status.DELIVERED
@@ -448,6 +477,42 @@ def update_project(request, project_id):
                 },
             )
 
+        if previous_status != project.status:
+            if project.status == Project.Status.DELIVERED:
+                activity_type = ProjectActivity.Type.DELIVERED
+                description = "Project marked as Delivered."
+            elif previous_status == Project.Status.DELIVERED:
+                activity_type = ProjectActivity.Type.REOPENED
+                description = (
+                    f"Project reopened in {project.get_status_display()}."
+                )
+            else:
+                activity_type = ProjectActivity.Type.STATUS_CHANGE
+                previous_label = Project.Status(previous_status).label
+                description = (
+                    f"Status changed from {previous_label} "
+                    f"to {project.get_status_display()}."
+                )
+            _record_project_activity(
+                project=project,
+                activity_type=activity_type,
+                description=description,
+                actor=request.user,
+            )
+
+        if previous_due_at != project.due_at:
+            due_label = (
+                project.due_at.strftime("%b. %-d, %Y")
+                if project.due_at
+                else "No due date"
+            )
+            _record_project_activity(
+                project=project,
+                activity_type=ProjectActivity.Type.DUE_DATE_CHANGE,
+                description=f"Due date changed to {due_label}.",
+                actor=request.user,
+            )
+
         messages.success(
             request,
             "Project details updated.",
@@ -469,7 +534,7 @@ def update_project(request, project_id):
     )
 
 
-@staff_member_required
+@staff_required
 @require_POST
 @never_cache
 def create_task(request, project_id):
@@ -498,6 +563,13 @@ def create_task(request, project_id):
 
         task.save()
 
+        _record_project_activity(
+            project=project,
+            activity_type=ProjectActivity.Type.TASK_CREATED,
+            description=f'Task created: “{task.title}”.',
+            actor=request.user,
+        )
+
         messages.success(
             request,
             "Task added.",
@@ -519,7 +591,7 @@ def create_task(request, project_id):
     )
 
 
-@staff_member_required
+@staff_required
 @require_POST
 @never_cache
 def update_task_status(request, project_id, task_id):
@@ -532,6 +604,7 @@ def update_task_status(request, project_id, task_id):
     form = TaskStatusForm(request.POST)
 
     if form.is_valid():
+        previous_status = task.status
         task.status = form.cleaned_data["status"]
         task.save(
             update_fields=[
@@ -539,6 +612,18 @@ def update_task_status(request, project_id, task_id):
                 "updated_at",
             ]
         )
+
+        if previous_status != task.status:
+            previous_label = ProjectTask.Status(previous_status).label
+            _record_project_activity(
+                project=task.project,
+                activity_type=ProjectActivity.Type.TASK_STATUS_CHANGE,
+                description=(
+                    f'“{task.title}” changed from {previous_label} '
+                    f"to {task.get_status_display()}."
+                ),
+                actor=request.user,
+            )
 
         messages.success(
             request,
@@ -553,4 +638,49 @@ def update_task_status(request, project_id, task_id):
     return redirect(
         "operations:project_detail",
         project_id=project_id,
+    )
+
+
+def _record_project_activity(*, project, activity_type, description, actor):
+    return ProjectActivity.objects.create(
+        project=project,
+        type=activity_type,
+        description=description,
+        occurred_at=timezone.now(),
+        actor=actor,
+    )
+
+
+@staff_required
+@require_POST
+@never_cache
+def create_project_activity(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    form = ProjectActivityForm(request.POST)
+    if form.is_valid():
+        activity = form.save(commit=False)
+        activity.project = project
+        activity.type = ProjectActivity.Type.NOTE
+        activity.occurred_at = timezone.now()
+        activity.actor = request.user
+        activity.save()
+        messages.success(request, "Project activity added.")
+        return redirect("operations:project_detail", project_id=project.pk)
+
+    project = (
+        Project.objects.select_related(
+            "client",
+            "client__company",
+            "source_lead",
+            "source_lead__primary_contact",
+        )
+        .prefetch_related("tasks", "activities__actor")
+        .get(pk=project.pk)
+    )
+    messages.error(request, "Add a project note before submitting.")
+    return render(
+        request,
+        "operations/project_detail.html",
+        _project_context(project, activity_form=form),
+        status=400,
     )

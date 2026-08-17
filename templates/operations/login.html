@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Staff Login — Fora</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="{% static 'icons/favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/fora.css' %}">
+</head>
+<body>
+  <main class="flex min-h-screen items-center py-12">
+    <div class="fora-container">
+      <div class="mx-auto max-w-md">
+        <a href="/" class="fora-logo" aria-label="Fora public website">
+          <img src="{% static 'brand/fora-logo-light.svg' %}" alt="Fora" width="112" height="32">
+        </a>
+        <section class="fora-card mt-10 px-6 py-8 sm:px-9 sm:py-10" aria-labelledby="login-heading">
+          <p class="fora-eyebrow">Operations</p>
+          <h1 id="login-heading" class="fora-heading">Staff login</h1>
+          <p class="fora-copy mt-4">Sign in with your existing Fora staff account to continue.</p>
+          <form method="post" class="mt-8 grid gap-5">
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="rounded-fora-sm border border-fora-danger px-4 py-3 text-sm text-fora-danger" role="alert">{{ form.non_field_errors|striptags }}</div>{% endif %}
+            {% for field in form %}
+              <div>
+                <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-semibold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<p id="{{ field.id_for_label }}_error" class="mt-2 text-sm text-fora-danger" role="alert">{{ field.errors|striptags }}</p>{% endif %}
+              </div>
+            {% endfor %}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+            <button type="submit" class="fora-button fora-button-primary w-full">Log in</button>
+          </form>
+        </section>
+        <p class="mt-6 text-center text-sm text-fora-text-muted">Authorized staff access only.</p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

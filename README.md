@@ -104,3 +104,6 @@ PostgreSQL backups remain an operational responsibility. Enable automated,
 encrypted provider backups, define retention appropriate to the business, keep at
 least one copy outside the primary database lifecycle, and test restoration before
 launch and periodically thereafter. Never treat an untested backup as recoverable.
+
+The concise production deployment, staff access, SMTP, backup/restore, incident
+recovery, and rollback procedures are in [the operations runbook](docs/operations.md).

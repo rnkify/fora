@@ -11,7 +11,7 @@ from apps.projects.services import create_project
 
 
 @transaction.atomic
-def start_project_from_won_lead(*, lead_id: int) -> Project:
+def start_project_from_won_lead(*, lead_id: int, actor=None) -> Project:
     lead = (
         Lead.objects.select_for_update()
         .select_related("company")
@@ -78,6 +78,13 @@ def start_project_from_won_lead(*, lead_id: int) -> Project:
             "source_lead",
             "updated_at",
         ]
+    )
+
+    project.activities.create(
+        type=project.activities.model.Type.CREATED,
+        description=f"Project created from lead #{lead.pk}.",
+        occurred_at=timezone.now(),
+        actor=actor,
     )
 
     LeadActivity.objects.create(

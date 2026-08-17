@@ -15,6 +15,20 @@ def test_health_and_readiness(client):
     assert ready.json()["database"] == "ok"
 
 
+@pytest.mark.django_db
+@override_settings(
+    SECURE_SSL_REDIRECT=True,
+    SECURE_REDIRECT_EXEMPT=[r"^health/$"],
+)
+def test_internal_health_probe_bypasses_https_redirect_only_for_liveness(client):
+    health = client.get(reverse("healthcheck"))
+    homepage = client.get(reverse("marketing:home"))
+
+    assert health.status_code == 200
+    assert homepage.status_code == 301
+    assert homepage["Location"].startswith("https://")
+
+
 def test_custom_500_response_is_safe(rf):
     response = server_error(rf.get("/forced-error/"))
 

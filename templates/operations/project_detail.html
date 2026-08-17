@@ -169,6 +169,48 @@
 
 <section class="fora-section-tight border-t border-fora-border">
   <div class="fora-container">
+    <div class="fora-ops-split">
+      <article class="fora-card fora-ops-panel">
+        <div class="fora-ops-panel-head"><div><p class="fora-eyebrow">History</p><h2 class="fora-subheading">Project activity</h2></div></div>
+        <div class="fora-ops-panel-body">
+          {% if project.activities.all %}
+            <div class="fora-ops-list">
+              {% for activity in project.activities.all %}
+                <div class="fora-ops-row">
+                  <p class="fora-ops-row-kicker">{{ activity.get_type_display }} · {{ activity.occurred_at }}{% if activity.actor %} · {{ activity.actor.get_username }}{% endif %}</p>
+                  <p class="fora-ops-row-meta whitespace-pre-line">{{ activity.description }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="fora-ops-empty">No project activity recorded yet.</p>
+          {% endif %}
+        </div>
+      </article>
+
+      <article class="fora-card fora-ops-panel">
+        <div class="fora-ops-panel-head"><div><p class="fora-eyebrow">Update</p><h2 class="fora-subheading">Add project note</h2></div></div>
+        <div class="fora-ops-panel-body">
+          <form method="post" action="{% url 'operations:create_project_activity' project.id %}" class="grid gap-5">
+            {% csrf_token %}
+            {% for field in project_activity_form %}
+              <div>
+                <label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-semibold">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}<p id="{{ field.id_for_label }}_error" class="mt-2 text-sm text-fora-danger" role="alert">{{ field.errors|striptags }}</p>{% endif %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="fora-button fora-button-primary">Add Project Note</button>
+          </form>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<section class="fora-section-tight border-t border-fora-border">
+  <div class="fora-container">
 
     <div class="flex flex-wrap items-end justify-between gap-6">
       <div>
@@ -190,14 +232,14 @@
           {% if project.tasks.all %}
             <div class="fora-ops-list">
               {% for task in project.tasks.all %}
-                <article class="fora-ops-row md:grid-cols-[1fr_auto] md:items-center">
+                <article class="fora-ops-row {% if task.status == 'done' %}opacity-65{% elif task.status == 'in_progress' %}border-fora-border-strong{% endif %} md:grid-cols-[1fr_auto] md:items-center">
                   <div>
                     <p class="fora-ops-row-title">
                       {{ task.title }}
                     </p>
 
                     <div class="mt-2 flex flex-wrap gap-2">
-                      <span class="fora-ops-tag">
+                      <span class="fora-ops-tag {% if task.status == 'done' %}line-through{% endif %}">
                         {{ task.get_status_display }}
                       </span>
 
@@ -212,13 +254,16 @@
                   <form
                     method="post"
                     action="{% url 'operations:update_task_status' project.id task.id %}"
-                    class="flex gap-2"
+                    class="grid w-full gap-2 sm:grid-cols-[minmax(0,1fr)_auto] md:w-auto"
                   >
                     {% csrf_token %}
 
+                    <label class="sr-only" for="task-{{ task.id }}-status">Status for {{ task.title }}</label>
+
                     <select
+                      id="task-{{ task.id }}-status"
                       name="status"
-                      class="rounded-fora-sm border border-fora-border bg-fora-surface px-3 py-2 text-sm text-fora-text"
+                      class="min-h-12 w-full rounded-fora-sm border border-fora-border bg-fora-surface px-3 py-2 text-sm text-fora-text transition focus:border-fora-border-strong"
                     >
                       {% for value, label in task_status_choices %}
                         <option
@@ -232,7 +277,7 @@
 
                     <button
                       type="submit"
-                      class="fora-button fora-button-secondary"
+                      class="fora-button fora-button-secondary w-full sm:w-auto"
                     >
                       Update
                     </button>
@@ -242,7 +287,7 @@
             </div>
           {% else %}
             <p class="fora-ops-empty">
-              No tasks have been added yet.
+              No delivery tasks yet. Add the first concrete next step to begin tracking work.
             </p>
           {% endif %}
 
