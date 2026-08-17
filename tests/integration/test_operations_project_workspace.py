@@ -127,6 +127,31 @@ def test_project_rejects_due_date_before_start_date(client):
 
 
 @pytest.mark.django_db
+def test_project_rejects_delivery_date_before_start_date(client):
+    user = make_staff()
+    project = make_project()
+    client.force_login(user)
+
+    response = client.post(
+        reverse("operations:update_project", args=[project.pk]),
+        {
+            "status": Project.Status.DELIVERED,
+            "started_at": "2026-08-30",
+            "due_at": "2026-09-10",
+            "delivered_at": "2026-08-20",
+            "revision_count": 0,
+            "notes": "",
+        },
+    )
+
+    project.refresh_from_db()
+    assert response.status_code == 200
+    assert b"Delivery date cannot be before the start date." in response.content
+    assert project.started_at is None
+    assert project.delivered_at is None
+
+
+@pytest.mark.django_db
 def test_reopening_delivered_project_clears_delivery_date(client):
     user = make_staff()
     project = make_project()

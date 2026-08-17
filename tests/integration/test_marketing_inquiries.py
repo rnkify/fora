@@ -28,6 +28,20 @@ def test_contact_submission_creates_inquiry(client):
 
 
 @pytest.mark.django_db
+def test_immediate_identical_contact_retry_is_idempotent(client):
+    payload = {
+        "name": "Example Person",
+        "email": "person@example.com",
+        "company": "Example Co",
+        "message": "Please contact me about a potential engagement.",
+    }
+
+    assert client.post(reverse("marketing:contact"), payload).status_code == 302
+    assert client.post(reverse("marketing:contact"), payload).status_code == 302
+    assert Inquiry.objects.count() == 1
+
+
+@pytest.mark.django_db
 def test_project_submission_creates_inquiry(client):
     response = client.post(
         reverse("marketing:start_project"),

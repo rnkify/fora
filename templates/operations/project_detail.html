@@ -150,7 +150,7 @@
               {% if project.source_lead %}
                 <div class="fora-ops-row">
                   <a
-                    href="/admin/leads/lead/{{ project.source_lead.id }}/change/"
+                    href="{% url 'operations:lead_detail' project.source_lead.id %}"
                     class="fora-ops-row-link"
                   >
                     Open source lead →

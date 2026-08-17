@@ -1,5 +1,7 @@
 from django import forms
 
+from apps.core.configuration import get_enabled_plans, get_enabled_services
+from apps.leads.models import Lead, LeadActivity
 from apps.projects.models import Project, ProjectTask
 
 INPUT_CLASS = (
@@ -40,9 +42,16 @@ class ProjectDeliveryForm(forms.ModelForm):
         cleaned_data = super().clean()
         started_at = cleaned_data.get("started_at")
         due_at = cleaned_data.get("due_at")
+        delivered_at = cleaned_data.get("delivered_at")
 
         if started_at and due_at and due_at < started_at:
             self.add_error("due_at", "Due date cannot be before the start date.")
+
+        if started_at and delivered_at and delivered_at < started_at:
+            self.add_error(
+                "delivered_at",
+                "Delivery date cannot be before the start date.",
+            )
 
         return cleaned_data
 
@@ -69,3 +78,66 @@ class TaskStatusForm(forms.Form):
     status = forms.ChoiceField(
         choices=ProjectTask.Status.choices,
     )
+
+
+class LeadForm(forms.ModelForm):
+    class Meta:
+        model = Lead
+        fields = (
+            "status",
+            "score",
+            "estimated_value",
+            "service_interest_id",
+            "plan_interest_id",
+            "next_action_at",
+            "notes",
+        )
+        widgets = {
+            "next_action_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "notes": forms.Textarea(attrs={"rows": 7}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["service_interest_id"] = forms.ChoiceField(
+            label="Service interest",
+            required=False,
+            choices=[
+                ("", "Not selected"),
+                *[(item.id, item.name) for item in get_enabled_services()],
+            ],
+        )
+        self.fields["plan_interest_id"] = forms.ChoiceField(
+            label="Plan interest",
+            required=False,
+            choices=[
+                ("", "Not selected"),
+                *[(item.id, item.name) for item in get_enabled_plans()],
+            ],
+        )
+        for name, field in self.fields.items():
+            field.widget.attrs["class"] = INPUT_CLASS
+            if self.is_bound and name in self.errors:
+                field.widget.attrs["aria-invalid"] = "true"
+                field.widget.attrs["aria-describedby"] = f"id_{name}_error"
+
+    def clean_score(self):
+        score = self.cleaned_data["score"]
+        if score > 100:
+            raise forms.ValidationError("Score must be between 0 and 100.")
+        return score
+
+
+class LeadActivityForm(forms.ModelForm):
+    class Meta:
+        model = LeadActivity
+        fields = ("type", "note")
+        widgets = {"note": forms.Textarea(attrs={"rows": 4})}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.widget.attrs["class"] = INPUT_CLASS
+            if self.is_bound and name in self.errors:
+                field.widget.attrs["aria-invalid"] = "true"
+                field.widget.attrs["aria-describedby"] = f"id_{name}_error"

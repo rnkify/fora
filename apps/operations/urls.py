@@ -6,6 +6,14 @@ app_name = "operations"
 
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
+    path("leads/", views.lead_list, name="lead_list"),
+    path("leads/<int:lead_id>/", views.lead_detail, name="lead_detail"),
+    path("leads/<int:lead_id>/update/", views.update_lead, name="update_lead"),
+    path(
+        "leads/<int:lead_id>/activities/add/",
+        views.create_lead_activity,
+        name="create_lead_activity",
+    ),
     path("projects/", views.project_list, name="project_list"),
     path(
         "leads/<int:lead_id>/start-project/",

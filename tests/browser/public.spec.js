@@ -193,3 +193,20 @@ test("reduced motion disables reveal transitions", async ({ page }) => {
   );
   expect(Number.parseFloat(transition)).toBeLessThanOrEqual(0.00001);
 });
+
+test("key public pages remain sound at extended release widths", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "Extended widths run once.");
+  const widths = [320, 375, 430, 1024, 1280, 1920];
+  const paths = ["/", "/services/", "/pricing/", "/process/", "/contact/", "/start/"];
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: width < 700 ? 844 : 1000 });
+    for (const path of paths) {
+      const response = await page.goto(path);
+      expect(response.status()).toBe(200);
+      await assertRenderedLayout(page);
+    }
+    await page.goto("/");
+    await revealPage(page);
+    await page.screenshot({ path: testInfo.outputPath(`home-${width}.png`), fullPage: true });
+  }
+});

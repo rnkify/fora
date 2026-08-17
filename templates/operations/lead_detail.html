@@ -1,0 +1,22 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ lead.company.name }} — Lead Operations{% endblock %}
+{% block meta_robots %}noindex,nofollow{% endblock %}
+{% block content %}
+<section class="fora-section-tight border-b border-fora-border"><div class="fora-container">
+  <a href="{% url 'operations:lead_list' %}" class="text-sm font-semibold text-fora-text-muted hover:text-fora-text">← Leads</a>
+  <div class="mt-10 flex flex-wrap items-end justify-between gap-6"><div><p class="fora-eyebrow">Lead</p><h1 class="fora-heading">{{ lead.company.name }}</h1>{% if lead.primary_contact %}<p class="fora-copy-lg mt-5">{{ lead.primary_contact.name }} · <a class="underline" href="mailto:{{ lead.primary_contact.email }}">{{ lead.primary_contact.email }}</a></p>{% endif %}</div><span class="fora-ops-tag">{{ lead.get_status_display }}</span></div>
+</div></section>
+<section class="fora-section-tight"><div class="fora-container"><div class="fora-ops-grid">
+  <article class="fora-card fora-ops-panel"><div class="fora-ops-panel-head"><div><p class="fora-eyebrow">Qualification</p><h2 class="fora-subheading">Lead details</h2></div></div><div class="fora-ops-panel-body">
+    <form method="post" action="{% url 'operations:update_lead' lead.id %}" class="grid gap-5">{% csrf_token %}
+      {% for field in lead_form %}<div><label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-semibold">{{ field.label }}</label>{{ field }}{% if field.errors %}<p id="{{ field.id_for_label }}_error" class="mt-2 text-sm text-fora-danger" role="alert">{{ field.errors|striptags }}</p>{% endif %}</div>{% endfor %}
+      <button type="submit" class="fora-button fora-button-primary">Save Lead</button>
+    </form>
+    {% if lead.status == 'won' and not lead.project %}<form method="post" action="{% url 'operations:start_project' lead.id %}" class="mt-4">{% csrf_token %}<button type="submit" class="fora-button fora-button-secondary">Start Project</button></form>{% elif lead.project %}<a class="fora-button fora-button-secondary mt-4" href="{% url 'operations:project_detail' lead.project.id %}">Open Project</a>{% endif %}
+  </div></article>
+  <div class="grid content-start gap-5">
+    <article class="fora-card fora-ops-panel"><div class="fora-ops-panel-head"><div><p class="fora-eyebrow">History</p><h2 class="fora-subheading">Activity</h2></div></div><div class="fora-ops-panel-body">{% if lead.activities.all %}<div class="fora-ops-list">{% for activity in lead.activities.all %}<div class="fora-ops-row"><p class="fora-ops-row-kicker">{{ activity.get_type_display }} · {{ activity.occurred_at }}</p><p class="fora-ops-row-meta whitespace-pre-line">{{ activity.note }}</p></div>{% endfor %}</div>{% else %}<p class="fora-ops-empty">No activity recorded yet.</p>{% endif %}</div></article>
+    <article class="fora-card fora-ops-panel"><div class="fora-ops-panel-head"><div><p class="fora-eyebrow">Follow-up</p><h2 class="fora-subheading">Add activity</h2></div></div><div class="fora-ops-panel-body"><form method="post" action="{% url 'operations:create_lead_activity' lead.id %}" class="grid gap-5">{% csrf_token %}{% for field in activity_form %}<div><label for="{{ field.id_for_label }}" class="mb-2 block text-sm font-semibold">{{ field.label }}</label>{{ field }}{% if field.errors %}<p id="{{ field.id_for_label }}_error" class="mt-2 text-sm text-fora-danger" role="alert">{{ field.errors|striptags }}</p>{% endif %}</div>{% endfor %}<button type="submit" class="fora-button fora-button-primary">Add Activity</button></form></div></article>
+  </div>
+</div></div></section>
+{% endblock %}

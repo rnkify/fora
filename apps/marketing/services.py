@@ -19,6 +19,19 @@ def _request_metadata(request):
 
 
 def create_contact_inquiry(*, request, cleaned_data):
+    duplicate_since = timezone.now() - timedelta(minutes=5)
+    duplicate = Inquiry.objects.filter(
+        type=Inquiry.Type.CONTACT,
+        name__iexact=cleaned_data["name"],
+        email__iexact=cleaned_data["email"],
+        company__iexact=cleaned_data.get("company", ""),
+        website__iexact=cleaned_data.get("website", ""),
+        message=cleaned_data["message"],
+        created_at__gte=duplicate_since,
+    ).first()
+    if duplicate is not None:
+        return duplicate
+
     inquiry = Inquiry.objects.create(
         type=Inquiry.Type.CONTACT,
         name=cleaned_data["name"],

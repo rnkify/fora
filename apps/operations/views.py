@@ -15,6 +15,8 @@ from apps.analytics.services import record_event
 from apps.leads.models import Lead
 from apps.marketing.models import Inquiry
 from apps.operations.forms import (
+    LeadActivityForm,
+    LeadForm,
     ProjectDeliveryForm,
     ProjectTaskForm,
     TaskStatusForm,
@@ -27,6 +29,107 @@ ACTIVE_PROJECT_STATUSES = tuple(
     for value, _label in Project.Status.choices
     if value not in {Project.Status.DELIVERED, Project.Status.ARCHIVED}
 )
+
+
+@staff_member_required
+@never_cache
+def lead_list(request):
+    leads = Lead.objects.select_related("company", "primary_contact")
+    query = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+    if query:
+        leads = leads.filter(
+            Q(company__name__icontains=query)
+            | Q(primary_contact__name__icontains=query)
+            | Q(primary_contact__email__icontains=query)
+            | Q(notes__icontains=query)
+        )
+    valid_statuses = {value for value, _label in Lead.Status.choices}
+    if status in valid_statuses:
+        leads = leads.filter(status=status)
+    page = Paginator(leads.order_by("-updated_at"), 25).get_page(request.GET.get("page"))
+    return render(request, "operations/lead_list.html", {
+        "page": page,
+        "query": query,
+        "selected_status": status if status in valid_statuses else "",
+        "status_choices": Lead.Status.choices,
+    })
+
+
+@staff_member_required
+@never_cache
+def lead_detail(request, lead_id):
+    lead = get_object_or_404(
+        Lead.objects.select_related("company", "primary_contact", "project").prefetch_related(
+            "activities"
+        ),
+        pk=lead_id,
+    )
+    return render(request, "operations/lead_detail.html", _lead_context(lead))
+
+
+def _lead_context(lead, *, lead_form=None, activity_form=None):
+    return {
+        "lead": lead,
+        "lead_form": lead_form or LeadForm(instance=lead),
+        "activity_form": activity_form or LeadActivityForm(),
+    }
+
+
+@staff_member_required
+@require_POST
+@never_cache
+def update_lead(request, lead_id):
+    lead = get_object_or_404(Lead, pk=lead_id)
+    previous_status = lead.status
+    form = LeadForm(request.POST, instance=lead)
+    if form.is_valid():
+        lead = form.save()
+        if previous_status != lead.status:
+            previous_label = Lead.Status(previous_status).label
+            lead.activities.create(
+                type=lead.activities.model.Type.STATUS_CHANGE,
+                note=(
+                    f"Status changed from {previous_label} "
+                    f"to {lead.get_status_display()}."
+                ),
+                occurred_at=timezone.now(),
+            )
+        messages.success(request, "Lead details updated.")
+        return redirect("operations:lead_detail", lead_id=lead.pk)
+    lead = Lead.objects.select_related("company", "primary_contact").prefetch_related(
+        "activities"
+    ).get(pk=lead.pk)
+    return render(
+        request,
+        "operations/lead_detail.html",
+        _lead_context(lead, lead_form=form),
+        status=400,
+    )
+
+
+@staff_member_required
+@require_POST
+@never_cache
+def create_lead_activity(request, lead_id):
+    lead = get_object_or_404(Lead, pk=lead_id)
+    form = LeadActivityForm(request.POST)
+    if form.is_valid():
+        activity = form.save(commit=False)
+        activity.lead = lead
+        activity.occurred_at = timezone.now()
+        activity.save()
+        messages.success(request, "Activity added.")
+        return redirect("operations:lead_detail", lead_id=lead.pk)
+    lead = Lead.objects.select_related("company", "primary_contact").prefetch_related(
+        "activities"
+    ).get(pk=lead.pk)
+    return render(
+        request,
+        "operations/lead_detail.html",
+        _lead_context(lead, activity_form=form),
+        status=400,
+    )
 
 
 @staff_member_required

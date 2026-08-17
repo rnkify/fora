@@ -223,7 +223,7 @@
                     </span>
 
                     <a
-                      href="/admin/leads/lead/{{ lead.id }}/change/"
+                      href="{% url 'operations:lead_detail' lead.id %}"
                       class="fora-ops-row-link"
                     >
                       Open →
@@ -266,7 +266,7 @@
 
                   <div class="fora-ops-row-side">
                     <a
-                      href="/admin/leads/lead/{{ lead.id }}/change/"
+                      href="{% url 'operations:lead_detail' lead.id %}"
                       class="fora-ops-row-link"
                     >
                       Open →
@@ -502,7 +502,7 @@
 
         <div class="fora-ops-panel-body">
           <div class="grid gap-3">
-            <a href="/admin/leads/lead/" class="fora-ops-row-link">Open lead list →</a>
+            <a href="{% url 'operations:lead_list' %}" class="fora-ops-row-link">Open lead list →</a>
             <a href="/admin/clients/client/" class="fora-ops-row-link">Open clients →</a>
             <a href="/admin/projects/project/" class="fora-ops-row-link">Open projects →</a>
             <a href="/admin/marketing/inquiry/" class="fora-ops-row-link">Open inquiries →</a>

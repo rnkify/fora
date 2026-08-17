@@ -49,6 +49,7 @@
       >
         {% if is_operations %}
           <a href="{% url 'operations:dashboard' %}" class="fora-nav-link">Dashboard</a>
+          <a href="{% url 'operations:lead_list' %}" class="fora-nav-link">Leads</a>
           <a href="{% url 'operations:project_list' %}" class="fora-nav-link">Projects</a>
         {% else %}
           {% for item in fora.navigation %}
@@ -81,6 +82,7 @@
           >
             {% if is_operations %}
               <a href="{% url 'operations:dashboard' %}" class="fora-mobile-nav-link">Dashboard</a>
+              <a href="{% url 'operations:lead_list' %}" class="fora-mobile-nav-link">Leads</a>
               <a href="{% url 'operations:project_list' %}" class="fora-mobile-nav-link">Projects</a>
               <a href="/admin/" class="fora-mobile-nav-link">Admin</a>
             {% else %}
@@ -122,6 +124,7 @@
       <nav class="flex flex-wrap gap-5" aria-label="Footer navigation">
         {% if is_operations %}
           <a href="{% url 'operations:dashboard' %}" class="hover:text-fora-text">Dashboard</a>
+          <a href="{% url 'operations:lead_list' %}" class="hover:text-fora-text">Leads</a>
           <a href="{% url 'operations:project_list' %}" class="hover:text-fora-text">Projects</a>
         {% else %}
           <a href="{% url 'marketing:contact' %}" class="hover:text-fora-text">Contact</a>

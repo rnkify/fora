@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %}
+{% block title %}Leads — Fora Operations{% endblock %}
+{% block meta_robots %}noindex,nofollow{% endblock %}
+{% block content %}
+<section class="fora-section-tight border-b border-fora-border"><div class="fora-container">
+  <p class="fora-eyebrow">Operations</p><h1 class="fora-heading">Leads</h1>
+  <p class="fora-copy-lg mt-5 max-w-3xl">Qualify inquiries, plan follow-ups, and move ready work into delivery.</p>
+</div></section>
+<section class="fora-section-tight"><div class="fora-container">
+  <form method="get" class="fora-card mb-8 grid gap-4 p-5 md:grid-cols-[1fr_auto_auto] md:items-end">
+    <div><label for="lead-search" class="mb-2 block text-sm font-semibold">Search</label><input id="lead-search" name="q" value="{{ query }}" type="search" placeholder="Company, contact, email, or notes" class="w-full rounded-fora-sm border border-fora-border bg-fora-surface px-4 py-3 text-fora-text"></div>
+    <div><label for="lead-status" class="mb-2 block text-sm font-semibold">Status</label><select id="lead-status" name="status" class="rounded-fora-sm border border-fora-border bg-fora-surface px-4 py-3 text-fora-text"><option value="">Any status</option>{% for value, label in status_choices %}<option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <button type="submit" class="fora-button fora-button-primary">Filter leads</button>
+  </form>
+  {% if page.object_list %}<div class="fora-card fora-ops-table-card"><div class="fora-ops-table-scroll"><table class="w-full min-w-[760px] border-collapse text-left"><thead class="border-b border-fora-border text-xs uppercase tracking-wider text-fora-text-muted"><tr><th class="p-5">Company / contact</th><th class="p-5">Status</th><th class="p-5">Interest</th><th class="p-5">Next action</th><th class="p-5" aria-label="Open lead"></th></tr></thead><tbody>
+  {% for lead in page.object_list %}<tr class="border-b border-fora-border last:border-0"><td class="p-5"><strong>{{ lead.company.name }}</strong>{% if lead.primary_contact %}<div class="mt-1 text-sm text-fora-text-muted">{{ lead.primary_contact.name }} · {{ lead.primary_contact.email }}</div>{% endif %}</td><td class="p-5"><span class="fora-ops-tag">{{ lead.get_status_display }}</span></td><td class="p-5">{{ lead.service_interest_id|default:"Not selected" }}{% if lead.plan_interest_id %}<div class="mt-1 text-sm text-fora-text-muted">{{ lead.plan_interest_id }}</div>{% endif %}</td><td class="p-5">{{ lead.next_action_at|default:"Not scheduled" }}</td><td class="p-5 text-right"><a class="fora-ops-row-link" href="{% url 'operations:lead_detail' lead.id %}">Open →</a></td></tr>{% endfor %}
+  </tbody></table></div></div>
+  {% if page.has_other_pages %}<nav class="mt-8 flex items-center justify-between text-sm" aria-label="Lead pages">{% if page.has_previous %}<a class="fora-ops-row-link" href="?q={{ query|urlencode }}&status={{ selected_status }}&page={{ page.previous_page_number }}">← Previous</a>{% else %}<span></span>{% endif %}<span class="text-fora-text-muted">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>{% if page.has_next %}<a class="fora-ops-row-link" href="?q={{ query|urlencode }}&status={{ selected_status }}&page={{ page.next_page_number }}">Next →</a>{% endif %}</nav>{% endif %}
+  {% else %}<div class="fora-card p-10 text-center"><h2 class="fora-subheading">No leads found</h2><p class="fora-copy mt-3">Try another search or status. Project inquiries create leads automatically.</p></div>{% endif %}
+</div></section>
+{% endblock %}

@@ -1,11 +1,23 @@
 from urllib.parse import urlsplit
 
+import dj_database_url
+
 from config.env import env, env_bool, env_list, env_required
 from config.settings.base import *  # noqa: F403
 
 DEBUG = False
 
 SECRET_KEY = env_required("SECRET_KEY")
+
+DATABASES = {
+    "default": dj_database_url.parse(
+        env_required("DATABASE_URL"),
+        conn_max_age=60,
+        conn_health_checks=True,
+    )
+}
+if DATABASES["default"]["ENGINE"] != "django.db.backends.postgresql":
+    raise RuntimeError("DATABASE_URL must use PostgreSQL in production.")
 
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
 
@@ -32,8 +44,6 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = False
 # Preload is an irreversible domain-wide operational commitment and is not
 # enabled automatically. HSTS itself remains enabled for one year.
-SILENCED_SYSTEM_CHECKS = ["security.W021"]
-
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"
 

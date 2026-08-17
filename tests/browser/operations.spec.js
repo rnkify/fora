@@ -18,6 +18,7 @@ test("dashboard and project list render responsively", async ({ page }, testInfo
   const navigationName = page.viewportSize().width >= 768 ? "Primary navigation" : "Mobile navigation";
   const navigation = page.getByRole("navigation", { name: navigationName, includeHidden: true });
   await expect(navigation).toContainText("Dashboard");
+  await expect(navigation).toContainText("Leads");
   await expect(navigation).toContainText("Projects");
   await assertRenderedLayout(page);
   await page.screenshot({ path: testInfo.outputPath("ops-dashboard-full.png"), fullPage: true });
@@ -26,6 +27,27 @@ test("dashboard and project list render responsively", async ({ page }, testInfo
   await expect(page.getByRole("heading", { name: "Projects" })).toBeVisible();
   await assertRenderedLayout(page);
   await page.screenshot({ path: testInfo.outputPath("ops-projects-full.png"), fullPage: true });
+});
+
+test("lead workspace supports qualification and activity", async ({ page }, testInfo) => {
+  await loginAsStaff(page);
+  await page.goto("/ops/leads/?q=QA+Won+Lead");
+  await expect(page.getByRole("heading", { name: "Leads" })).toBeVisible();
+  await page.getByRole("link", { name: "Open →" }).click();
+  await expect(page.getByRole("heading", { name: "QA Won Lead" })).toBeVisible();
+  await assertRenderedLayout(page);
+
+  await page.getByLabel("Score").fill("80");
+  await page.getByLabel("Notes").fill("Qualified through rendered browser QA.");
+  await page.getByRole("button", { name: "Save Lead" }).click();
+  await expect(page.getByText("Lead details updated.")).toBeVisible();
+
+  const activityNote = `Confirmed ${testInfo.project.name} scope and next steps.`;
+  await page.getByLabel("Type").selectOption("call");
+  await page.getByLabel("Note", { exact: true }).fill(activityNote);
+  await page.getByRole("button", { name: "Add Activity" }).click();
+  await expect(page.getByText(activityNote)).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("lead-workspace-full.png"), fullPage: true });
 });
 
 test("project search, state filters, and pagination work", async ({ page }) => {
